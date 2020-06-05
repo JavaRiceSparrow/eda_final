@@ -67,6 +67,7 @@ bool getModuleLine(ifstream & input, string port[])
     {
         cout << buffer << endl;
         cout << "It's not a module!" << endl;
+        return false;
     }
     // string port[100];
     size_t portIdx = 0;
@@ -86,13 +87,30 @@ bool getModuleLine(ifstream & input, string port[])
     strPassEmpty(buffer, froPtr);
     str1.assign(buffer, froPtr, buffer.size()-froPtr);
 
-    froPtr = 0;
-    str1
-
-    
-    
-    
-    
+    froPtr = 0, endPtr = str1.size()-2;
+    if (!strReach(str1,froPtr,'(',false) || !strReach(str1,endPtr,')',true))
+    {
+        cout << "() is missing!" << endl;
+    }
+    else if (froPtr >= endPtr)
+    {
+        cout << "() is wrong!" << endl;
+    }
+    else{
+        contain.assign(str1,froPtr, endPtr-froPtr);
+        if (strCount(contain, '(') || strCount(contain, ')'))
+        {
+            cout << "() is too many!" << endl;
+        }
+    }
+    froPtr = 0, endPtr = 0;
+    strPassEmpty(contain,froPtr);
+    endPtr = froPtr;
+    while (strReach(contain, endPtr, ' ', ','))
+    {
+        ;
+        string interval;
+    }
 }
 
 

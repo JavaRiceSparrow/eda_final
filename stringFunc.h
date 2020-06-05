@@ -5,24 +5,20 @@
 // #include "module.h"
 
 using namespace std;
-#define size_t_max numeric_limits<size_t>::max()
+// #define size_t_max numeric_limits<size_t>::max()
 
-bool strPassEmpty(const string &str, size_t &ptr)
-{
-    return strPass(str, ptr, ' ', '\t');
-}
-
+bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bool is_k2, bool back) ;
 bool strPass(const string &str, size_t &ptr, const char &keyword1, const char &keyword2, bool back = false)
 {
-    /*
-    * usage: Find the first char in str
-    * after the (ptr)th char
-    * which is not equal to char keyword.
-    * Change ptr to the idx of object.
-    */
+    return _strpass(str,ptr,keyword1,keyword2,true,back);
+}
+bool strPass(const string &str, size_t &ptr, const char &keyword1, bool back = false)
+{
+    return _strpass(str, ptr, keyword1, ' ', false, back);
+}
+bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bool is_k2, bool back)
+{
     size_t length = str.size();
-    size_t neg_1 = 0;
-    --neg_1;
 
     if (!back)
     {
@@ -31,24 +27,30 @@ bool strPass(const string &str, size_t &ptr, const char &keyword1, const char &k
 
         while (ptr < length)
         {
-            if (str[ptr] != keyword1 || str[ptr] != keyword2)
-                break;
+            if (str[ptr] != k1)
+                return true;
+            if (is_k2 && str[ptr] != k2)
+                return true;
             ++ptr;
         }
-        if (ptr != length)
-            return true;
+        // if (ptr != length)
+        //     return true;
         return false;
     }
     else
     {
+        size_t neg_1 = 0;
+        --neg_1;
         if (ptr > length)
             return false;
 
-        while (ptr >=0)
+        while (ptr >= 0)
         {
             if (ptr == neg_1)
                 return false;
-            if (str[ptr] != keyword1 || str[ptr] != keyword2)
+            if (str[ptr] != k1)
+                return true;
+            if (is_k2 && str[ptr] != k2)
                 return true;
             --ptr;
         }
@@ -57,94 +59,93 @@ bool strPass(const string &str, size_t &ptr, const char &keyword1, const char &k
         // return false;
     }
 }
-bool strPass(const string &str, size_t &ptr, const char &keyword1, bool back = false)
+
+bool strPassEmpty(const string &str, size_t &ptr)
 {
-    /*
-    * usage: Find the first char in str
-    * after the (ptr)th char
-    * which is not equal to char keyword.
-    * Change ptr to the idx of object.
-    */
+    return strPass(str, ptr, ' ', '\t');
+}
+
+bool _strreach(const string &str, size_t &ptr, const char &k1, const char &k2, bool is_k2, bool back);
+bool strReach(const string &str, size_t &ptr, const char &keyword1, const char &keyword2, bool back = false)
+{
+    return _strreach(str, ptr, keyword1, keyword2, true, back);
+}
+bool strReach(const string &str, size_t &ptr, const char &keyword1, bool back = false)
+{
+    return _strreach(str, ptr, keyword1, ' ', false, back);
+}
+bool _strreach(const string &str, size_t &ptr, const char &k1, const char &k2, bool is_k2, bool back)
+{
     size_t length = str.size();
 
-    if (ptr >= length)
+    if (!back)
+    {
+        if (ptr >= length)
+            return false;
+
+        while (ptr < length)
+        {
+            if (str[ptr] == k1)
+                return true;
+            if (is_k2 && str[ptr] == k2)
+                return true;
+            ++ptr;
+        }
+        // if (ptr != length)
+        //     return true;
         return false;
-
-    while (ptr < length)
-    {
-        if (str[ptr] != keyword1 )
-            break;
-        ++ptr;
     }
-    if (ptr != length)
-        return true;
-    return false;
+    else
+    {
+        size_t neg_1 = 0;
+        --neg_1;
+        if (ptr > length)
+            return false;
+
+        while (ptr >= 0)
+        {
+            if (ptr == neg_1)
+                return false;
+            if (str[ptr] == k1)
+                return true;
+            if (is_k2 && str[ptr] == k2)
+                return true;
+            --ptr;
+        }
+        // if (ptr != neg_1)
+        //     return true;
+        // return false;
+    }
 }
 
-bool strReach(const string &str, size_t &ptr, const char &keyword1, const char &keyword2)
+bool strPassEmpty(const string &str, size_t &ptr)
 {
-    /*
-    * usage: Find the first char in str
-    * after the (ptr)th char
-    * which is equal to char keyword.
-    * Change ptr to the idx of object.
-    */
-    size_t length = str.size();
-
-    if (ptr >= length)
-        return false;
-
-    while (ptr < length)
-    {
-        if (str[ptr] == keyword1 || str[ptr] == keyword2)
-            break;
-        ++ptr;
-    }
-    if (ptr != length)
-        return true;
-    return false;
-}
-bool strpReach(const string &str, size_t &ptr, const char &keyword1 = ' ')
-{
-    /*
-    * usage: Find the first char in str
-    * after the (ptr)th char
-    * which is equal to char keyword.
-    * Change ptr to the idx of object.
-    */
-    size_t length = str.size();
-
-    if (ptr >= length)
-        return false;
-
-    while (ptr < length)
-    {
-        if (str[ptr] == keyword1)
-            break;
-        ++ptr;
-    }
-    if (ptr != length)
-        return true;
-    return false;
+    return strPass(str, ptr, ' ', '\t');
 }
 
-size_t strCount(const string &str, const char &keyword)
+bool deriveContain(const string &str, string value[])
 {
-    /*
-    * usage: Count the number of chars in str
-    * return number.
-    */
-    size_t num = 0;
-
-    for (size_t i = 0;i < str.size(); ++i)
+    size_t froPtr = 0, endPtr = 0;
+    // strPass(str, ptr, ' ', '\t');
+    if (!strPass(str, froPtr, ' ', '\t'))
+        cout << froPtr << endl;
+    endPtr = froPtr;
+    size_t valueIdx = 0;
+    while (strReach(str, endPtr, ' ', ','))
     {
-        if (str[i]==keyword) ++num;
+        value[valueIdx].assign(str, froPtr, endPtr-froPtr);
+        froPtr = endPtr;
+        if (!strPassEmpty(str, froPtr))
+            cout << froPtr << endl;
+        string interval;
+        interval.assign(str, endPtr, froPtr-endPtr);
+        if (strCount(interval, ',') != 1)
+        {
+            cout << endPtr << ' ' << froPtr << endl;
+            cout << "No ','!" << endl;
+            return false;
+        }
+        endPtr = froPtr;
     }
-    return num;
-}
-size_t strfind(const string *str, const string *keywords)
-{
-    // if
-    size_t str_size = (sizeof(str) / sizeof(*str));
-    return 0;
+    return true;
 }
