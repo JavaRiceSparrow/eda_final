@@ -1,6 +1,12 @@
+#ifndef __STRING_FUNC_H__
+#define __STRING_FUNC_H__
+
 #include <iostream>
 // #include <fstream>
 #include <cstring>
+
+
+
 
 // #include "module.h"
 
@@ -163,3 +169,5 @@ bool deriveContain(const string &contain, string value[])
     }
     return true;
 }
+
+#endif //__STRING_FUNC_H__

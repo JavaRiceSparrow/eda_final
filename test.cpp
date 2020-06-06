@@ -3,7 +3,7 @@
 #include <fstream>
 #include<cstring>
 
-#include "module.h"
+// #include "module.h"
 #include "stringFunc.h"
 
 using namespace std;
@@ -12,6 +12,7 @@ char c1[] = "asd";
 
 char c2[] = "asd";
 
+/*
 int main(int argc, char **argv)
 {
     string input_file_name = "ver/g1.v";
@@ -51,6 +52,7 @@ int main(int argc, char **argv)
     input.close();
         return 0;
 }
+*/
 
 bool getModuleLine(ifstream & input, string port[]){
     /*
@@ -86,6 +88,7 @@ bool getModuleLine(ifstream & input, string port[]){
     froPtr = 0, endPtr = str1.size()-2;
     if (!strReach(str1,froPtr,'(',false) || !strReach(str1,endPtr,')',true))
     {
+        cout << buffer << '\n';
         cout << "() is missing!" << endl;
     }
     else if (froPtr >= endPtr)
@@ -93,7 +96,7 @@ bool getModuleLine(ifstream & input, string port[]){
         cout << "() is wrong!" << endl;
     }
     else{
-        contain.assign(str1,froPtr, endPtr-froPtr);
+        contain.assign(str1,++froPtr, --endPtr-froPtr);
         if (strCount(contain, '(') || strCount(contain, ')'))
         {
             cout << "() is too many!" << endl;
@@ -114,16 +117,31 @@ bool getInput(ifstream &input, string in[], string port[])
         cout << "It should be a input!" << endl;
         return false;
     }
-    string contain;
+    string contain("");
     size_t froPtr, endPtr;
     while(getline(input, buffer))
     {
         froPtr = (endPtr = buffer.size());
         if (strReach(buffer, endPtr, ';', true))
         {
-            ;
+            strPassEmpty(buffer, froPtr, true);
+            if (froPtr != endPtr)
+            {
+                string str_t;
+                str_t.assign(buffer,endPtr,  froPtr-endPtr);
+                cout << "string " << str_t << " behind ';'!" << endl;
+                return false;
+            }
+            else{
+                contain.append(buffer,0,endPtr);
+                deriveContain(contain, in);
+                return true;
+            }
         }
+        contain.append(buffer, 0, endPtr);
     }
+    cout << "Why wryyyyyyyy~" << endl;
+    return false;
     
 
 }

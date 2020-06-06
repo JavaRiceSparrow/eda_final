@@ -1,12 +1,25 @@
 // fortest.cpp
 
 #include <iostream>
-// #include <fstream>
+#include <fstream>
 #include <cstring>
 #include "stringFunc.h"
+#include "test.cpp"
+
 using namespace std;
 int main()
 {
+    string input_file_name = "inoutTest.txt";
+    ifstream input(input_file_name, ifstream::in);
+    string str[10];
+    getModuleLine(input, str);
+    for (int i = 0;i<10;++i)
+    {
+        if (str[i].empty())
+            break;
+        cout << str[i] << endl;
+    }
+
     // string str("a1, a2, a5, 23 ,  fs,a ");
     // string ans[10];
     // bool su = deriveContain(str, ans);
