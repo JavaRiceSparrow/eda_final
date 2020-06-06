@@ -27,11 +27,14 @@ bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bo
 
         while (ptr < length)
         {
-            if (str[ptr] != k1)
+            // cout << "test:" << (str[ptr] != k1) << is_k2 << (str[ptr] != k2) << endl;
+            if (str[ptr] != k1 && !(is_k2 && str[ptr] == k2))
                 return true;
-            if (is_k2 && str[ptr] != k2)
-                return true;
-            ++ptr;
+            // if (str[ptr] != k1 && str[ptr] != k2)
+            //     return true;
+                // if
+                //     return true;
+                ++ptr;
         }
         // if (ptr != length)
         //     return true;
@@ -48,9 +51,7 @@ bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bo
         {
             if (ptr == neg_1)
                 return false;
-            if (str[ptr] != k1)
-                return true;
-            if (is_k2 && str[ptr] != k2)
+            if (str[ptr] != k1 && (is_k2 && str[ptr] != k2))
                 return true;
             --ptr;
         }
@@ -60,9 +61,10 @@ bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bo
     }
 }
 
-bool strPassEmpty(const string &str, size_t &ptr)
+bool strPassEmpty(const string &str, size_t &ptr, bool back = false)
 {
-    return strPass(str, ptr, ' ', '\t');
+    // return strPass(str, ptr, ' ', '\t', back);
+    return strPass(str, ptr, ' ', back);
 }
 
 bool _strreach(const string &str, size_t &ptr, const char &k1, const char &k2, bool is_k2, bool back);
@@ -85,9 +87,7 @@ bool _strreach(const string &str, size_t &ptr, const char &k1, const char &k2, b
 
         while (ptr < length)
         {
-            if (str[ptr] == k1)
-                return true;
-            if (is_k2 && str[ptr] == k2)
+            if (str[ptr] == k1 || (is_k2 && str[ptr] == k2))
                 return true;
             ++ptr;
         }
@@ -106,9 +106,7 @@ bool _strreach(const string &str, size_t &ptr, const char &k1, const char &k2, b
         {
             if (ptr == neg_1)
                 return false;
-            if (str[ptr] == k1)
-                return true;
-            if (is_k2 && str[ptr] == k2)
+            if (str[ptr] == k1 || (is_k2 && str[ptr] == k2))
                 return true;
             --ptr;
         }
@@ -118,34 +116,50 @@ bool _strreach(const string &str, size_t &ptr, const char &k1, const char &k2, b
     }
 }
 
-bool strPassEmpty(const string &str, size_t &ptr)
+size_t strCount(const string &str, const char &key)
 {
-    return strPass(str, ptr, ' ', '\t');
+    size_t num = 0;
+    for(int i = 0;i< str.size();++i)
+    {
+        if (str[i] == key)
+            ++num;
+    }
+    return num;
 }
 
-bool deriveContain(const string &str, string value[])
+bool deriveContain(const string &contain, string value[])
 {
+    string str = contain;
+    for (int i = 0; i < str.size() ; ++i)
+        if (str[i] == '\t') str[i] = ' ';
+
     size_t froPtr = 0, endPtr = 0;
     // strPass(str, ptr, ' ', '\t');
     if (!strPass(str, froPtr, ' ', '\t'))
-        cout << froPtr << endl;
-    endPtr = froPtr;
+        cout << "froPtr: " << froPtr << endl;
+    endPtr = froPtr+1;
     size_t valueIdx = 0;
-    while (strReach(str, endPtr, ' ', ','))
+
+    strReach(str, endPtr, ' ', ',');
+    value[valueIdx++].assign(str, froPtr, endPtr - froPtr);
+    froPtr = endPtr;
+    while (strPass(str, froPtr, ' ', ','))
     {
-        value[valueIdx].assign(str, froPtr, endPtr-froPtr);
-        froPtr = endPtr;
-        if (!strPassEmpty(str, froPtr))
-            cout << froPtr << endl;
         string interval;
-        interval.assign(str, endPtr, froPtr-endPtr);
+        interval.assign(str, endPtr, froPtr - endPtr);
         if (strCount(interval, ',') != 1)
         {
             cout << endPtr << ' ' << froPtr << endl;
-            cout << "No ','!" << endl;
+            cout << "',' number wrong!" << endl;
             return false;
         }
         endPtr = froPtr;
+        strReach(str, endPtr, ' ', ',');
+        value[valueIdx++].assign(str, froPtr, endPtr-froPtr);
+        froPtr = endPtr+1;
+        // if (!)
+        //     cout << "froPtr: " << froPtr << endl;
+        
     }
     return true;
 }

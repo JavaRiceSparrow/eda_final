@@ -52,8 +52,7 @@ int main(int argc, char **argv)
         return 0;
 }
 
-bool getModuleLine(ifstream & input, string port[])
-{
+bool getModuleLine(ifstream & input, string port[]){
     /*
     * "module module1(i1,i2,i3...);"
     * |
@@ -69,9 +68,6 @@ bool getModuleLine(ifstream & input, string port[])
         cout << "It's not a module!" << endl;
         return false;
     }
-    // string port[100];
-    size_t portIdx = 0;
-    // string space(" ");
 
     
     /*
@@ -103,14 +99,31 @@ bool getModuleLine(ifstream & input, string port[])
             cout << "() is too many!" << endl;
         }
     }
-    froPtr = 0, endPtr = 0;
-    strPassEmpty(contain,froPtr);
-    endPtr = froPtr;
-    while (strReach(contain, endPtr, ' ', ','))
-    {
-        ;
-        string interval;
-    }
+
+    deriveContain(contain, port);
 }
 
+bool getInput(ifstream &input, string in[], string port[])
+{
+    string buffer;
 
+    input >> buffer;
+    if (buffer != "input")
+    {
+        cout << buffer << endl;
+        cout << "It should be a input!" << endl;
+        return false;
+    }
+    string contain;
+    size_t froPtr, endPtr;
+    while(getline(input, buffer))
+    {
+        froPtr = (endPtr = buffer.size());
+        if (strReach(buffer, endPtr, ';', true))
+        {
+            ;
+        }
+    }
+    
+
+}
