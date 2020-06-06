@@ -13,7 +13,7 @@
 using namespace std;
 // #define size_t_max numeric_limits<size_t>::max()
 
-bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bool is_k2, bool back) ;
+bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bool input_k2, bool back) ;
 bool strPass(const string &str, size_t &ptr, const char &keyword1, const char &keyword2, bool back = false)
 {
     return _strpass(str,ptr,keyword1,keyword2,true,back);
@@ -22,9 +22,13 @@ bool strPass(const string &str, size_t &ptr, const char &keyword1, bool back = f
 {
     return _strpass(str, ptr, keyword1, ' ', false, back);
 }
-bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bool is_k2, bool back)
+bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bool input_k2, bool back)
 {
+    // cout << "'" << k1 << "','" << k2 << "'" << endl;
     size_t length = str.size();
+
+    bool is_k2 = input_k2;
+    if (is_k2) if (k1 == k2) is_k2 = false;
 
     if (!back)
     {
@@ -34,13 +38,19 @@ bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bo
         while (ptr < length)
         {
             // cout << "test:" << (str[ptr] != k1) << is_k2 << (str[ptr] != k2) << endl;
-            if (str[ptr] != k1 && !(is_k2 && str[ptr] == k2))
-                return true;
-            // if (str[ptr] != k1 && str[ptr] != k2)
-            //     return true;
-                // if
-                //     return true;
-                ++ptr;
+            if (is_k2)
+            {
+                // cout << "FUCK!" << endl;
+                if (str[ptr] != k1 && str[ptr] != k2)
+                    return true;
+            }
+            else
+            {
+                if (str[ptr] != k1)
+                    return true;
+            }
+
+            ++ptr;
         }
         // if (ptr != length)
         //     return true;
@@ -50,15 +60,29 @@ bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bo
     {
         size_t neg_1 = 0;
         --neg_1;
-        if (ptr > length)
+        if (ptr >= length)
             return false;
 
         while (ptr >= 0)
         {
+            // cout << ptr << ", " << (str[ptr] != k1) << endl;
             if (ptr == neg_1)
+            {
+
+                // cout <<"三小啦" << endl;
                 return false;
-            if (str[ptr] != k1 && (is_k2 && str[ptr] != k2))
-                return true;
+            }
+            if (is_k2)
+            {
+                // cout << "FUCK!" << endl;
+                if (str[ptr] != k1 && str[ptr] != k2)
+                    return true;
+            }
+            else 
+            {
+                if (str[ptr] != k1)
+                    return true;
+            }
             --ptr;
         }
         // if (ptr != neg_1)

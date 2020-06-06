@@ -54,7 +54,45 @@ int main(int argc, char **argv)
 }
 */
 
-bool getModuleLine(ifstream & input, string port[]){
+string readUntilSemic(ifstream &input)
+{
+    string str("");
+    string buffer;
+    size_t froPtr = 0, endPtr = 0;
+    while (getline(input, buffer))
+    {
+        froPtr = (endPtr = buffer.size());
+        if (strReach(buffer, endPtr, ';', true))
+        {
+            // cout << froPtr;
+            if (!strPassEmpty(buffer, --froPtr, true))
+                cout << "WTF?" << endl;
+            if (froPtr < endPtr)
+                cout << "WTF?" << endl;
+            if (froPtr != endPtr)
+            {
+                // cout << froPtr<< '\n' << endPtr;
+                string str_t;
+                str_t.assign(buffer, endPtr+1, froPtr - endPtr);
+                cout << "string \"" << str_t << "\" behind ';'!" << endl;
+                return "Wrong!";
+            }
+            else
+            {
+                str.append(buffer, 0, endPtr - 1);
+                break;
+                // deriveContain(contain, in);
+                // return true;
+            }
+        }
+        str.append(buffer, 0, froPtr);
+        // cout << str.size() << endl;
+    }
+    return str;
+}
+
+bool getModuleLine(ifstream &input, string port[])
+{
     /*
     * "module module1(i1,i2,i3...);"
     * |
@@ -84,11 +122,16 @@ bool getModuleLine(ifstream & input, string port[]){
     string str1, contain;
     strPassEmpty(buffer, froPtr);
     str1.assign(buffer, froPtr, buffer.size()-froPtr);
-
-    froPtr = 0, endPtr = str1.size()-2;
+    string para("");
+    para.append(str1);
+    string str2 = readUntilSemic(input);
+    para.append(str2);
+    // size_t froPtr, endPtr;
+    
+    froPtr = 0, endPtr = para.size()-1;
     if (!strReach(str1,froPtr,'(',false) || !strReach(str1,endPtr,')',true))
     {
-        cout << buffer << '\n';
+        // cout << buffer << '\n';
         cout << "() is missing!" << endl;
     }
     else if (froPtr >= endPtr)
