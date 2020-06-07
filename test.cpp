@@ -79,7 +79,7 @@ string readUntilSemic(ifstream &input)
             }
             else
             {
-                str.append(buffer, 0, endPtr - 1);
+                str.append(buffer, 0, endPtr );
                 break;
                 // deriveContain(contain, in);
                 // return true;
@@ -93,12 +93,6 @@ string readUntilSemic(ifstream &input)
 
 bool getModuleLine(ifstream &input, string port[])
 {
-    /*
-    * "module module1(i1,i2,i3...);"
-    * |
-    * V
-    * "module1(i1,i2,i3...);"
-    */
     string buffer;
 
     input >> buffer;
@@ -108,30 +102,13 @@ bool getModuleLine(ifstream &input, string port[])
         cout << "It's not a module!" << endl;
         return false;
     }
-
+    string para = readUntilSemic(input);
     
-    /*
-    * " module1(i1,i2,i3...);"
-    * |
-    * V
-    * "i1,i2,i3..."
-    */
-
-    size_t froPtr = 0, endPtr = 0;
-    getline(input, buffer);
-    string str1, contain;
-    strPassEmpty(buffer, froPtr);
-    str1.assign(buffer, froPtr, buffer.size()-froPtr);
-    string para("");
-    para.append(str1);
-    string str2 = readUntilSemic(input);
-    para.append(str2);
-    // size_t froPtr, endPtr;
-    
-    froPtr = 0, endPtr = para.size()-1;
-    if (!strReach(str1,froPtr,'(',false) || !strReach(str1,endPtr,')',true))
+    size_t froPtr = 0, endPtr = para.size();
+    string contain;
+    if (!strReach(para,froPtr,'(',false) || !strReach(para,endPtr,')',true))
     {
-        // cout << buffer << '\n';
+        cout << froPtr << ' ' << endPtr << '\n';
         cout << "() is missing!" << endl;
     }
     else if (froPtr >= endPtr)
@@ -139,7 +116,7 @@ bool getModuleLine(ifstream &input, string port[])
         cout << "() is wrong!" << endl;
     }
     else{
-        contain.assign(str1,++froPtr, --endPtr-froPtr);
+        contain.assign(para,++froPtr, --endPtr-froPtr);
         if (strCount(contain, '(') || strCount(contain, ')'))
         {
             cout << "() is too many!" << endl;
@@ -149,7 +126,7 @@ bool getModuleLine(ifstream &input, string port[])
     deriveContain(contain, port);
 }
 
-bool getInput(ifstream &input, string in[], string port[])
+bool getInput(ifstream &input, string in[])
 {
     string buffer;
 
@@ -160,31 +137,35 @@ bool getInput(ifstream &input, string in[], string port[])
         cout << "It should be a input!" << endl;
         return false;
     }
-    string contain("");
-    size_t froPtr, endPtr;
-    while(getline(input, buffer))
-    {
-        froPtr = (endPtr = buffer.size());
-        if (strReach(buffer, endPtr, ';', true))
-        {
-            strPassEmpty(buffer, froPtr, true);
-            if (froPtr != endPtr)
-            {
-                string str_t;
-                str_t.assign(buffer,endPtr,  froPtr-endPtr);
-                cout << "string " << str_t << " behind ';'!" << endl;
-                return false;
-            }
-            else{
-                contain.append(buffer,0,endPtr);
-                deriveContain(contain, in);
-                return true;
-            }
-        }
-        contain.append(buffer, 0, endPtr);
-    }
-    cout << "Why wryyyyyyyy~" << endl;
-    return false;
-    
+    string contain = readUntilSemic(input);
+    deriveContain(contain, in);
+}
 
+bool getOutput(ifstream &input, string out[])
+{
+    string buffer;
+
+    input >> buffer;
+    if (buffer != "output")
+    {
+        cout << buffer << endl;
+        cout << "It should be a output!" << endl;
+        return false;
+    }
+    string contain = readUntilSemic(input);
+    deriveContain(contain, out);
+}
+bool getWire(ifstream &input, string wire[])
+{
+    string buffer;
+
+    input >> buffer;
+    if (buffer != "output")
+    {
+        cout << buffer << endl;
+        cout << "It should be a output!" << endl;
+        return false;
+    }
+    string contain = readUntilSemic(input);
+    deriveContain(contain, wire);
 }

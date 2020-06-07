@@ -13,6 +13,7 @@
 using namespace std;
 // #define size_t_max numeric_limits<size_t>::max()
 
+
 bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bool input_k2, bool back) ;
 bool strPass(const string &str, size_t &ptr, const char &keyword1, const char &keyword2, bool back = false)
 {
@@ -144,6 +145,15 @@ bool _strreach(const string &str, size_t &ptr, const char &k1, const char &k2, b
         //     return true;
         // return false;
     }
+}
+
+string removeHeadSpace(string str)
+{
+    size_t ptr = 0;
+    strPassEmpty(str, ptr);
+    string str2;
+    str2.assign(str, ptr);
+    return str2;
 }
 
 size_t strCount(const string &str, const char &key)

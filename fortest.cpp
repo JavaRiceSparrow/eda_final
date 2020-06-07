@@ -4,57 +4,60 @@
 #include <fstream>
 #include <cstring>
 #include "stringFunc.h"
-#include "test.cpp"
+#include "verRead.h"
+#include "module.h"
+#include <vector>
 
 using namespace std;
 int main()
 {
-    // cout << (' '!='a') << endl;
-    string input_file_name = "inoutTest.txt";
-    ifstream input(input_file_name, ifstream::in);
+    for (gateType type = BUF; type != EOE; type = gateType(type + 1))
+    {
+        cout << gateList[type] << endl;
+    }
+    // // cout << (' '!='a') << endl;
+    // string input_file_name = "inoutTest.txt";
+    // ifstream input(input_file_name, ifstream::in);
     // string str[100];
-    string str = readUntilSemic(input);
-    cout << str << endl;
-    // getModuleLine(input, str);
-    // for (int i = 0;i<10;++i)
+    // string name;
+    // string buffer;
+    // input >> buffer;
+    // vector<gate> _gate;
+    // if (buffer != "module") return 300;
+    // getModuleLine(input, name, str);
+    
+    // while (input >> buffer)
     // {
-    //     if (str[i].empty())
-    //         break;
-    //     cout << str[i] << endl;
+    //     if (buffer == "input")
+    //     {
+    //         string contain = readUntilSemic(input);
+    //         deriveContain(contain, in_put);
+    //     }
+    //     else if (buffer == "output")
+    //     {
+    //         string contain = readUntilSemic(input);
+    //         deriveContain(contain, out_put);
+    //     }
+    //     else if (buffer == "wire")
+    //     {
+    //         string contain = readUntilSemic(input);
+    //         deriveContain(contain, wire);
+    //     }
+    //     else if (buffer == "reg")
+    //     {
+    //         string contain = readUntilSemic(input);
+    //         deriveContain(contain, reg);
+    //     }
+    //     else break;
     // }
 
-    // string str("a1, a2, a5, 23 ,  fs,a ");
-    // string ans[10];
-    // bool su;
-    // bool su = deriveContain(str, ans);
-    // cout << su << endl;
-    // cout << "ans:" << endl;
-    // for (int i = 0;i<10;++i)
+    // while (input >> buffer)
     // {
-    //     if (ans[i].empty()) break;
-    //     cout << ans[i] << endl;
+    //     if (buffer == "endmodule")
+    //     {
+    //         finish();
+    //     }
     // }
-    // string str(" \t 111122333");
-    // size_t ptr = str.size();
-    // bool su;
-
-    // // cout << (str[0]==' ') << endl;
-    // su = strPassEmpty(str, --ptr, true);
-
-    //     // su = strReach(str, ptr, '3', false);
-    // cout << su << ptr << endl;
-    // su = strReach(str, ptr, '1', true);
-    // cout << su << ptr << endl;
-    // // su = strReach(str, ptr, '1', false);
-    // // cout << su << ptr << endl;
-    // su = strReach(str, ptr, '2', false);
-    // cout << su << ptr << endl;
-    // su = strPass(str, ptr, '2', false);
-    // cout << su << ptr << endl;
-    // // su = strPass(str, ptr,',', ' ', false);
-    // su = strPassEmpty(str, ptr);
-    // cout << su << ptr << endl;
-    // su = strPass(str, ptr, '1', false);
-    // cout << su << ptr << endl;
-    // cout << str << endl;
+    // cout << name << endl;
+    
 }
