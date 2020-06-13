@@ -1,3 +1,6 @@
+#ifndef __VER_READ_H__
+#define __VER_READ_H__
+
 // #include<cstdlib>
 #include<iostream>
 #include <fstream>
@@ -7,6 +10,8 @@
 #include "stringFunc.h"
 
 using namespace std;
+
+
 
 bool deriveContain(const string &contain, string value[]);
 
@@ -126,52 +131,13 @@ bool getModuleLine(ifstream &input, string &name, string port[])
     return true;
 }
 
-gate* getGateLine(ifstream &input, string &name, string port[])
-{
-    string buffer;
-    gate* newgate = 0;
-
-    input >> buffer;
-    gateType type = EOE;
-    for (gateType iter = BUF; iter != EOE; iter = gateType(iter + 1))
-    {
-        if (buffer == gTypeTest[iter]) {
-            type = iter;
-            break;
-        }
-    }
-    string para ;
-    getline(input,para);
-    para = removeHeadSpace(para);
-    // string para = removeHeadSpace(readUntilSemic(input));
-
-    size_t froPtr = 0, endPtr = para.size();
-    string contain;
-    if (!strReach(para, froPtr, '(', false) || !strReach(para, endPtr, ')', true))
-    {
-        cout << froPtr << ' ' << endPtr << '\n';
-        cout << "() is missing!" << endl;
-    }
-    else if (froPtr >= endPtr)
-    {
-        cout << "() is wrong!" << endl;
-    }
-    else
-    {
-        name.assign(para, 0, froPtr);
-        contain.assign(para, ++froPtr, --endPtr - froPtr);
-        if (strCount(contain, '(') || strCount(contain, ')'))
-        {
-            cout << "() is too many!" << endl;
-        }
-    }
-
-    deriveContain(contain, port);
-}
 
 bool deriveContain(const string &contain, string value[])
 {
+    // cout << "[dC] string:" << endl;
+    // cout << contain << '\n' << endl;
     string str = contain;
+    size_t arraySize = sizeof(value)/sizeof(*value);
     for (int i = 0; i < str.size(); ++i)
         if (str[i] == '\t')
             str[i] = ' ';
@@ -184,6 +150,12 @@ bool deriveContain(const string &contain, string value[])
     size_t valueIdx = 0;
 
     strReach(str, endPtr, ' ', ',');
+    if (valueIdx == arraySize) {
+        cout << "[deriveContain] Size of Array value is too small(" 
+        << arraySize << ")!" << endl;
+        
+        return false;
+    }
     value[valueIdx++].assign(str, froPtr, endPtr - froPtr);
     froPtr = endPtr;
     while (strPass(str, froPtr, ' ', ','))
@@ -198,6 +170,11 @@ bool deriveContain(const string &contain, string value[])
         }
         endPtr = froPtr;
         strReach(str, endPtr, ' ', ',');
+        if (valueIdx == arraySize)
+        {
+            cout << "[deriveContain] Size of Array value is too small!" << endl;
+            return false;
+        }
         value[valueIdx++].assign(str, froPtr, endPtr - froPtr);
         froPtr = endPtr + 1;
         // if (!)
@@ -206,46 +183,4 @@ bool deriveContain(const string &contain, string value[])
     return true;
 }
 
-// bool getInput(ifstream &input, string in[])
-// {
-//     string buffer;
-
-//     input >> buffer;
-//     if (buffer != "input")
-//     {
-//         cout << buffer << endl;
-//         cout << "It should be a input!" << endl;
-//         return false;
-//     }
-//     string contain = readUntilSemic(input);
-//     deriveContain(contain, in);
-// }
-
-// bool getOutput(ifstream &input, string out[])
-// {
-//     string buffer;
-
-//     input >> buffer;
-//     if (buffer != "output")
-//     {
-//         cout << buffer << endl;
-//         cout << "It should be a output!" << endl;
-//         return false;
-//     }
-//     string contain = readUntilSemic(input);
-//     deriveContain(contain, out);
-// }
-// bool getWire(ifstream &input, string wire[])
-// {
-//     string buffer;
-
-//     input >> buffer;
-//     if (buffer != "output")
-//     {
-//         cout << buffer << endl;
-//         cout << "It should be a output!" << endl;
-//         return false;
-//     }
-//     string contain = readUntilSemic(input);
-//     deriveContain(contain, wire);
-// }
+#endif //__VER_READ_H__

@@ -13,7 +13,7 @@ int main()
 {
     for (gateType type = BUF; type != EOE; type = gateType(type + 1))
     {
-        cout << gateList[type] << endl;
+        cout << gTypeTest[type] << endl;
     }
     // // cout << (' '!='a') << endl;
     // string input_file_name = "inoutTest.txt";

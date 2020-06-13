@@ -167,41 +167,6 @@ size_t strCount(const string &str, const char &key)
     return num;
 }
 
-bool deriveContain(const string &contain, string value[])
-{
-    string str = contain;
-    for (int i = 0; i < str.size() ; ++i)
-        if (str[i] == '\t') str[i] = ' ';
 
-    size_t froPtr = 0, endPtr = 0;
-    // strPass(str, ptr, ' ', '\t');
-    if (!strPass(str, froPtr, ' ', '\t'))
-        cout << "froPtr: " << froPtr << endl;
-    endPtr = froPtr+1;
-    size_t valueIdx = 0;
-
-    strReach(str, endPtr, ' ', ',');
-    value[valueIdx++].assign(str, froPtr, endPtr - froPtr);
-    froPtr = endPtr;
-    while (strPass(str, froPtr, ' ', ','))
-    {
-        string interval;
-        interval.assign(str, endPtr, froPtr - endPtr);
-        if (strCount(interval, ',') != 1)
-        {
-            cout << endPtr << ' ' << froPtr << endl;
-            cout << "',' number wrong!" << endl;
-            return false;
-        }
-        endPtr = froPtr;
-        strReach(str, endPtr, ' ', ',');
-        value[valueIdx++].assign(str, froPtr, endPtr-froPtr);
-        froPtr = endPtr+1;
-        // if (!)
-        //     cout << "froPtr: " << froPtr << endl;
-        
-    }
-    return true;
-}
 
 #endif //__STRING_FUNC_H__
