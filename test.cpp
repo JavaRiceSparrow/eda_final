@@ -22,10 +22,14 @@ int main(int argc, char **argv)
     // cout << strcmp(c1,c2) <<endl;
     // ifstream input (input_file_name, ifstream::in);
     module testM =  module();
-    testM.readFile(input_file_name);
+
+    // cout << "test1" << endl;
+
+    if (!testM.readFile(input_file_name))
+        cout << "Failed!" << endl;
     cout << "name: " << testM.name << endl;
     cout << "input: ";
-    for (int i = 0;i<100;++i)
+    for (int i = 0; i < testM.in_put.size(); ++i)
     {
         string &str = testM.in_put[i];
         if (str.empty()) break;
@@ -33,7 +37,7 @@ int main(int argc, char **argv)
     }
     cout << endl;
     cout << "output: ";
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < testM.out_put.size(); ++i)
     {
         string &str = testM.out_put[i];
         if (str.empty())
@@ -42,7 +46,7 @@ int main(int argc, char **argv)
     }
     cout << endl;
     cout << "wire: ";
-    for (int i = 0; i < 1000; ++i)
+    for (int i = 0; i < testM.wire.size(); ++i)
     {
         string &str = testM.wire[i];
         if (str.empty())

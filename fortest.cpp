@@ -5,17 +5,28 @@
 #include <cstring>
 #include "stringFunc.h"
 #include "verRead.h"
-#include "module.h"
-#include <vector>
+// #include "module.h"
+// #include <vector>
 
 using namespace std;
 int main()
 {
-    for (gateType type = BUF; type != EOE; type = gateType(type + 1))
-    {
-        cout << gTypeTest[type] << endl;
-    }
+    // for (gateType type = BUF; type != EOE; type = gateType(type + 1))
+    // {
+    //     cout << gTypeTest[type] << endl;
+    // }
     // // cout << (' '!='a') << endl;
+    string a = "a,  b, c,2,52,43958v ";
+    string* str_arr = new string[25];
+    deriveContain(a, str_arr, 25);
+    for (int i = 0; i < 25; ++i)
+    {
+        string &str = str_arr[i];
+        if (str.empty())
+            break;
+        cout << str << "__";
+    }
+    cout << endl;
     // string input_file_name = "inoutTest.txt";
     // ifstream input(input_file_name, ifstream::in);
     // string str[100];

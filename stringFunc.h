@@ -86,9 +86,10 @@ bool _strpass(const string &str, size_t &ptr, const char &k1, const char &k2, bo
             }
             --ptr;
         }
+        ptr == length;
         // if (ptr != neg_1)
         //     return true;
-        // return false;
+        return false;
     }
 }
 

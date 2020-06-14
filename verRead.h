@@ -2,68 +2,28 @@
 #define __VER_READ_H__
 
 // #include<cstdlib>
-#include<iostream>
+#include <iostream>
 #include <fstream>
-#include<cstring>
+#include <cstring>
+#include <vector>
 
-#include "module.h"
+// #include "module.h"
 #include "stringFunc.h"
 
 using namespace std;
 
-
-
-bool deriveContain(const string &contain, string value[]);
-
-/*
-int main(int argc, char **argv)
-{
-string input_file_name = "ver/g1.v";
-// string input_file_name = "case/case1/gf.v";
-// cout << strcmp(c1,c2) <<endl;
-ifstream input (input_file_name, ifstream::in);
-if (!input.is_open())
-{
-    cout << "Reading file " << input_file_name << " failed!" << endl;
-    return 0;
-}
-// char buffer[500];
-string port[200];
-if (!getModuleLine(input, port))
-{
-    cout << "" << endl;
-}
-// string buffer;
-// size_t froPtr = 0, endPtr = 0;
-
-// input >> buffer;
-// if (buffer != "module")
-// {
-//     cout << buffer << endl;
-//     cout << "It's not a module!" << endl;
-// }
-// string port[100];
-
-// while (getline(input, buffer))
-// {
-//     ;
-// }
-// cout << buffer << endl;
-
-// while()
-
-input.close();
-    return 0;
-}
-*/
+bool deriveContain(const string &contain, vector<string> &value);
 
 string readUntilSemic(ifstream &input)
 {
     string str("");
     string buffer;
     size_t froPtr = 0, endPtr = 0;
+    // cout << input.eof() << endl;
     while (getline(input, buffer))
     {
+
+        // cout << "[test2] buffer:\"" << buffer << "\"" << endl;
         froPtr = (endPtr = buffer.size());
         if (strReach(buffer, endPtr, ';', true))
         {
@@ -76,13 +36,13 @@ string readUntilSemic(ifstream &input)
             {
                 // cout << froPtr<< '\n' << endPtr;
                 string str_t;
-                str_t.assign(buffer, endPtr+1, froPtr - endPtr);
+                str_t.assign(buffer, endPtr + 1, froPtr - endPtr);
                 cout << "string \"" << str_t << "\" behind ';'!" << endl;
                 return "Wrong!";
             }
             else
             {
-                str.append(buffer, 0, endPtr );
+                str.append(buffer, 0, endPtr);
                 break;
                 // deriveContain(contain, in);
                 // return true;
@@ -91,10 +51,12 @@ string readUntilSemic(ifstream &input)
         str.append(buffer, 0, froPtr);
         // cout << str.size() << endl;
     }
+
+    // cout << "[test2] \"" << str << "\"" << endl;
     return str;
 }
 
-bool getModuleLine(ifstream &input, string &name, string port[])
+bool getModuleLine(ifstream &input, string &name, vector<string> &port)
 {
     // string buffer;
 
@@ -105,11 +67,11 @@ bool getModuleLine(ifstream &input, string &name, string port[])
     //     cout << "It's not a module!" << endl;
     //     return false;
     // }
-    string para =  removeHeadSpace(readUntilSemic(input));
-    
+    string para = removeHeadSpace(readUntilSemic(input));
+
     size_t froPtr = 0, endPtr = para.size();
     string contain;
-    if (!strReach(para,froPtr,'(',false) || !strReach(para,endPtr,')',true))
+    if (!strReach(para, froPtr, '(', false) || !strReach(para, endPtr, ')', true))
     {
         cout << froPtr << ' ' << endPtr << '\n';
         cout << "() is missing!" << endl;
@@ -118,9 +80,10 @@ bool getModuleLine(ifstream &input, string &name, string port[])
     {
         cout << "() is wrong!" << endl;
     }
-    else{
+    else
+    {
         name.assign(para, 0, froPtr);
-        contain.assign(para,++froPtr, --endPtr-froPtr);
+        contain.assign(para, ++froPtr, --endPtr - froPtr);
         if (strCount(contain, '(') || strCount(contain, ')'))
         {
             cout << "() is too many!" << endl;
@@ -131,13 +94,22 @@ bool getModuleLine(ifstream &input, string &name, string port[])
     return true;
 }
 
+// bool deriveContain(const string &contain, vector<string>& value)
+// {
+//     if (valueSize < 0)
+//         return false;
+//     else
+//         return deriveContain(contain, value, size_t(valueSize));
+// }
 
-bool deriveContain(const string &contain, string value[])
+bool deriveContain(const string &contain, vector<string> &value)
 {
+    cout << "[dC] starting..." << endl;
     // cout << "[dC] string:" << endl;
     // cout << contain << '\n' << endl;
     string str = contain;
-    size_t arraySize = sizeof(value)/sizeof(*value);
+    // size_t arraySize = sizeof(&value)/sizeof(value);
+    // cout << arraySize << endl;
     for (int i = 0; i < str.size(); ++i)
         if (str[i] == '\t')
             str[i] = ' ';
@@ -149,13 +121,23 @@ bool deriveContain(const string &contain, string value[])
     endPtr = froPtr + 1;
     size_t valueIdx = 0;
 
+    if (value.size())
+        cout << "[dC] Empty string vector!(It will crash)" << endl;
+    // valueIdx = 0;
+    // value.resize(10);
     strReach(str, endPtr, ' ', ',');
-    if (valueIdx == arraySize) {
-        cout << "[deriveContain] Size of Array value is too small(" 
-        << arraySize << ")!" << endl;
-        
-        return false;
-    }
+    // if (valueIdx == valueSize) {
+    //     // cout << value[0] << endl;
+    //     cout << "[deriveContain] Size of Array value is too small("
+    //          << valueSize << ")!" << endl;
+
+    //     return false;
+    // }
+    // cout << "t1" << endl;
+    if (value.size() == valueIdx)
+        value.resize(valueIdx * 2);
+    // value.resize(++valueIdx);
+
     value[valueIdx++].assign(str, froPtr, endPtr - froPtr);
     froPtr = endPtr;
     while (strPass(str, froPtr, ' ', ','))
@@ -170,12 +152,20 @@ bool deriveContain(const string &contain, string value[])
         }
         endPtr = froPtr;
         strReach(str, endPtr, ' ', ',');
-        if (valueIdx == arraySize)
+        // if (valueIdx == valueSize)
+        // {
+        //     cout << "[deriveContain] Size of Array value is too small(full)!" << endl;
+        //     return false;
+        // }
+        if (froPtr != endPtr)
         {
-            cout << "[deriveContain] Size of Array value is too small!" << endl;
-            return false;
+            if (value.size() == valueIdx)
+                value.resize(valueIdx * 2);
+            value[valueIdx++].assign(str, froPtr, endPtr - froPtr);
         }
-        value[valueIdx++].assign(str, froPtr, endPtr - froPtr);
+        cout << "[test1] Get " << value[valueIdx - 1]
+             << " at (" << froPtr << "," << endPtr
+             << ")." << endl;
         froPtr = endPtr + 1;
         // if (!)
         //     cout << "froPtr: " << froPtr << endl;
