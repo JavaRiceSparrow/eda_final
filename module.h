@@ -4,7 +4,8 @@
 #include <iostream>
 using namespace std;
 
-#define DEBUG_OPT
+// #define DEBUG_OPT
+// #define DEBUG_OPT_SIMP
 
 ///
 #include <fstream>
@@ -19,16 +20,18 @@ using namespace std;
 class module
 {
 public:
-    string name;
-    vector<string> port;
-    vector<string> in_put;
-    vector<string> out_put;
-    vector<string> wire;
+    string _name;
+    vector<string> _port;
+    vector<string> _input;
+    vector<string> _output;
+    vector<string> _wire;
     vector<gate *> _gates;
+    vector<speGate *> _speGates;
     module()
     {
 
         _gateIdx = 0;
+        _speGates.resize(0);
         // in_put = new string[100];
         // out_put = new string[100];
         // wire = new string[1000];
@@ -61,25 +64,30 @@ bool module::readFile(string path)
             return false;
         getline(input, buffer);
     }
-    port.resize(10);
+    _port.resize(10);
     getModuleLine(input, name, port);
-    this->name = name;
+    this->_name = name;
 #ifdef DEBUG_OPT
-    cout << "Name: " << this->name << endl;
+    cout << "Name: " << this->_name << endl;
     cout << "Port: ";
-    for (int i = 0; i < port.size(); ++i)
+    int n = 0;
+    for (int i = 0; i < _port.size(); ++i)
     {
-        string &str = this->port[i];
+        string &str = this->_port[i];
         if (str.empty())
             break;
+        ++n;
+#ifndef DEBUG_OPT_SIMP
         cout << str << " ";
+#endif
     }
+    cout << "(" << n << ")";
     cout << endl;
 #endif
 
     {
         bool w = false, i = false, o = false;
-
+        int size_i = 0, size_o = 0, size_w = 0; //UODONE
         while (input >> buffer)
         {
 #ifdef DEBUG_OPT
@@ -94,18 +102,23 @@ bool module::readFile(string path)
                 string contain = readUntilSemic(input);
                 // cout << this->in_put[10] << endl;
                 int len = contain.size() / 10 + 1;
-                this->in_put.resize(len);
+                this->_input.resize(len);
                 deriveContain(contain, this->in_put);
                 i = true;
 #ifdef DEBUG_OPT
                 cout << "Input: ";
-                for (int i = 0; i < in_put.size(); ++i)
+                int n = 0;
+                for (int i = 0; i < _input.size(); ++i)
                 {
-                    string &str = this->in_put[i];
+                    string &str = this->_input[i];
                     if (str.empty())
                         break;
+                    ++n;
+#ifndef DEBUG_OPT_SIMP
                     cout << str << " ";
+#endif
                 }
+                cout << "(" << n << ")";
                 cout << endl;
 #endif
             }
@@ -115,18 +128,23 @@ bool module::readFile(string path)
                     return false;
                 string contain = readUntilSemic(input);
                 int len = contain.size() / 10 + 1;
-                this->out_put.resize(len);
-                deriveContain(contain, this->out_put);
+                this->_output.resize(len);
+                deriveContain(contain, this->_output);
                 o = true;
 #ifdef DEBUG_OPT
                 cout << "Output: ";
-                for (int i = 0; i < out_put.size(); ++i)
+                int n = 0;
+                for (int i = 0; i < _output.size(); ++i)
                 {
-                    string &str = this->out_put[i];
+                    string &str = this->_output[i];
                     if (str.empty())
                         break;
+                    ++n;
+#ifndef DEBUG_OPT_SIMP
                     cout << str << " ";
+#endif
                 }
+                cout << "(" << n << ")";
                 cout << endl;
 #endif
             }
@@ -136,18 +154,23 @@ bool module::readFile(string path)
                     return false;
                 string contain = readUntilSemic(input);
                 int len = contain.size() / 10 + 1;
-                this->wire.resize(len);
-                deriveContain(contain, this->wire);
+                this->_wire.resize(len);
+                deriveContain(contain, this->_wire);
                 w = true;
 #ifdef DEBUG_OPT
                 cout << "Wire: ";
-                for (int i = 0; i < wire.size(); ++i)
+                int n = 0;
+                for (int i = 0; i < _wire.size(); ++i)
                 {
-                    string &str = this->wire[i];
+                    string &str = this->_wire[i];
                     if (str.empty())
                         break;
+                    ++n;
+#ifndef DEBUG_OPT_SIMP
                     cout << str << " ";
+#endif
                 }
+                cout << "(" << n << ")";
                 cout << endl;
 #endif
             }
@@ -163,10 +186,11 @@ bool module::readFile(string path)
         if (!(i && o && w))
             return false;
     }
+    _gates.resize(_output.size() + _wire.size());
 
     do
     {
-        cout << "buffer:" << buffer << endl;
+        // cout << "buffer:" << buffer << endl;
         if (buffer == "endmodule" || input.eof())
         {
             input.close();
@@ -175,25 +199,54 @@ bool module::readFile(string path)
         if (buffer == "//")
         {
             getline(input, buffer);
+#ifdef DEBUG_OPT
             cout << "comment: " << buffer << endl;
+#endif
             buffer.clear();
             continue;
         }
         if (buffer.size() > 1)
         {
             if (buffer[0] == '/' && buffer[1] == '/')
+            {
+                getline(input, buffer);
+#ifdef DEBUG_OPT
+                cout << "comment: " << buffer << endl;
+#endif
+                buffer.clear();
                 continue;
+            }
         }
 #ifdef DEBUG_OPT
         // cout << buffer[0];
         cout << "New gate :" << buffer << endl;
-        ;
 
 #endif
-        if (_gates.size() == _gateIdx)
-            _gates.resize(_gateIdx * 2);
+        // if (gParamNumVar[gType] && port.size() > gParamNum[gType])
+        // {
+        //     ;
+        // }
 
-        _gates[_gateIdx++] = getGateLine(input, buffer);
+        else
+        {
+            gateType gType;
+            string name;
+            vector<string> port;
+
+            if (!getGateLine(input, buffer))
+            {
+                _speGates.push_back(new speGate())
+            }
+
+            if (_gates.size() == _gateIdx)
+                _gates.resize(_gateIdx * 2);
+
+            _gates[_gateIdx++] = new gate(gType, name, port);
+        }
+
+        
+
+        // cout << "test4" << endl;
     } while (input >> buffer);
 }
 

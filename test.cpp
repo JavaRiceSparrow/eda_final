@@ -27,44 +27,44 @@ int main(int argc, char **argv)
 
     if (!testM.readFile(input_file_name))
         cout << "Failed!" << endl;
-    cout << "name: " << testM.name << endl;
-    cout << "input: ";
-    for (int i = 0; i < testM.in_put.size(); ++i)
-    {
-        string &str = testM.in_put[i];
-        if (str.empty()) break;
-        cout << str << ' ';
-    }
-    cout << endl;
-    cout << "output: ";
-    for (int i = 0; i < testM.out_put.size(); ++i)
-    {
-        string &str = testM.out_put[i];
-        if (str.empty())
-            break;
-        cout << str << ' ';
-    }
-    cout << endl;
-    cout << "wire: ";
-    for (int i = 0; i < testM.wire.size(); ++i)
-    {
-        string &str = testM.wire[i];
-        if (str.empty())
-            break;
-        cout << str << ' ';
-    }
-    cout << endl;
-    cout << "gate: ";
-    for (int i = 0; i < testM._gateIdx; ++i)
-    {
-        gate* gate1 = testM._gates[i];
-        // if (str.empty())
-        //     break;
-        cout << gParamNum[gate1->type] << ' '
-             << gate1->i1 << ' ' << gate1->i2 << ' '
-             << gate1->i3 << ' ' << gate1->o1 << ' ' << endl;
-    }
-    cout << endl;
+    // cout << "name: " << testM._name << endl;
+    // cout << "input: ";
+    // for (int i = 0; i < testM._in_put.size(); ++i)
+    // {
+    //     string &str = testM._input[i];
+    //     if (str.empty()) break;
+    //     cout << str << ' ';
+    // }
+    // cout << endl;
+    // cout << "output: ";
+    // for (int i = 0; i < testM.out_put.size(); ++i)
+    // {
+    //     string &str = testM.out_put[i];
+    //     if (str.empty())
+    //         break;
+    //     cout << str << ' ';
+    // }
+    // cout << endl;
+    // cout << "wire: ";
+    // for (int i = 0; i < testM.wire.size(); ++i)
+    // {
+    //     string &str = testM.wire[i];
+    //     if (str.empty())
+    //         break;
+    //     cout << str << ' ';
+    // }
+    // cout << endl;
+    // cout << "gate: ";
+    // for (int i = 0; i < testM._gateIdx; ++i)
+    // {
+    //     gate* gate1 = testM._gates[i];
+    //     // if (str.empty())
+    //     //     break;
+    //     cout << gTypeText[gate1->type] << ' '
+    //          << gate1->i1 << ' ' << gate1->i2 << ' '
+    //          << gate1->i3 << ' ' << gate1->o1 << ' ' << endl;
+    // }
+    // cout << endl;
     // if (!input.is_open())
     // {
     //     cout << "Reading file " << input_file_name << " failed!" << endl;

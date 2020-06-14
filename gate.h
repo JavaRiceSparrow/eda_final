@@ -24,10 +24,30 @@ enum gateType
     EOE
 };
 
-string gTypeTest[] = {"buf", "not", "and", "or", "xor", "nand", "nor", "_DC", "_HMUX"};
+string gTypeText[] = {"buf", "not", "and", "or", "xor", "nand", "nor", "_DC", "_HMUX"};
 int gParamNum[] = {2, 2, 3, 3, 3, 3, 3, 3, 4};
+bool gParamNumVar[] = {false, false, false, true, true, false, false, false, false};
 
-gate *getGateLine(ifstream &input, string gTypeTxt);
+bool getGateLine(ifstream &input, string gTypeTxt, string &name, gateType &type, vector<string> &port);
+/*
+ * Return true if it's a normal gate
+ * return false if it's a special gate
+ * (having multiple input)
+ * 
+ * input is the ifstream
+ * string gTypeTxt is the text of gate type
+ * (have to corresponse to a real gate)
+ * name is name of gate 
+ * type is gate type of gate
+ * port is port ..(the same as above).
+ * 
+ * 
+ * input >> gTypeTxt
+ * 
+ * text: name(port[0], port[1], ...);
+ * 
+ * 
+*/
 
 class gate
 {
@@ -35,12 +55,12 @@ public:
     gate(gateType gatetype, string name, vector<string> io)
     {
         int i = 0;
-        while (i<io.size())
-        {
-            cout << "\"" << io[i++] << "\" ";
-        }
-        cout << endl;
-        
+        // while (i<io.size())
+        // {
+        //     cout << "\"" << io[i++] << "\" ";
+        // }
+        // cout << endl;
+
         this->name = name;
         size_t ioLen = io.size();
         type = gatetype;
@@ -49,7 +69,7 @@ public:
         {
             cout << "[gate] TOO many io port!" << endl;
             cout << "       Expect (" << gParamNum[type]
-                 << "), but it's (" << ioLen <<")." << endl;
+                 << "), but it's (" << ioLen << ")." << endl;
         }
         if (ioLen < 2 || ioLen > 4)
         {
@@ -76,8 +96,34 @@ public:
 private:
     // gate *_gates;
 };
+class speGate
+{
+public:
+    speGate(gateType gatetype, string name, vector<string> io)
+    {
+        // int i = 0;
+        sVectorAdj(io);
 
-gate *getGateLine(ifstream &input, string gTypeTxt)
+        this->name = name;
+        size_t ioLen = io.size();
+        type = gatetype;
+        i = io;
+        i.pop_back();
+        o = io[ioLen - 1];
+
+        // for (int i = 0;i<io.size())
+    }
+
+    // void add();
+    vector<string> i;
+    string o;
+    string name;
+    gateType type;
+
+private:
+    // gate *_gates;
+};
+bool getGateLine(ifstream &input, string gTypeTxt, string &name, gateType &type, vector<string> &port)
 {
 
     // cout << input.peek() << endl;
@@ -89,7 +135,7 @@ gate *getGateLine(ifstream &input, string gTypeTxt)
     bool su = false;
     for (gateType iter = BUF; iter != EOE; iter = gateType(iter + 1))
     {
-        if (gTypeTxt == gTypeTest[iter])
+        if (gTypeTxt == gTypeText[iter])
         {
             gType = iter;
             su = true;
@@ -102,7 +148,7 @@ gate *getGateLine(ifstream &input, string gTypeTxt)
     }
     string para;
     getline(input, para);
-    cout << "[getGateLine] Input \"" << para << "\"" << endl;
+    // cout << "[getGateLine] Input \"" << para << "\"" << endl;
     para = removeHeadSpace(para);
     // string para = removeHeadSpace(readUntilSemic(input));
 
@@ -126,14 +172,38 @@ gate *getGateLine(ifstream &input, string gTypeTxt)
             cout << "() is too many!" << endl;
         }
     }
+    if (gParamNumVar[gType] && port.size() > gParamNum[gType])
+    {
+        return false;
+    }
+    else
+    {
+        port.resize(gParamNum[gType]);
+        deriveContain(contain, port);
+        return true;
+    }
 
-    vector<string> port;
-    port.resize(gParamNum[gType]);
-    cout << "[test3] "  << gParamNum[gType] << "" << endl;
+    // vector<string> port;
+    // cout << "[test3] "  << gParamNum[gType] << "" << endl;
 
-    deriveContain(contain, port);
-    gate *ptr = new gate(gType, name, port);
-    return ptr;
+
+    // gate *ptr = new gate(gType, name, port);
+    // return ptr;
+}
+
+void sVectorAdj(vector<string> &vec)
+{
+    size_t len = vec.size();
+    int n = len;
+
+    while (--n >= 0)
+    {
+        string &str = vec[n];
+        if (!str.empty())
+            break;
+        // --n;
+    }
+    vec.resize(n);
 }
 
 #endif //__GATE_H__

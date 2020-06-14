@@ -104,7 +104,7 @@ bool getModuleLine(ifstream &input, string &name, vector<string> &port)
 
 bool deriveContain(const string &contain, vector<string> &value)
 {
-    cout << "[dC] starting..." << endl;
+    // cout << "[dC] starting..." << endl;
     // cout << "[dC] string:" << endl;
     // cout << contain << '\n' << endl;
     string str = contain;
@@ -121,7 +121,7 @@ bool deriveContain(const string &contain, vector<string> &value)
     endPtr = froPtr + 1;
     size_t valueIdx = 0;
 
-    if (value.size())
+    if (value.size() == 0)
         cout << "[dC] Empty string vector!(It will crash)" << endl;
     // valueIdx = 0;
     // value.resize(10);
@@ -136,8 +136,6 @@ bool deriveContain(const string &contain, vector<string> &value)
     // cout << "t1" << endl;
     if (value.size() == valueIdx)
         value.resize(valueIdx * 2);
-    // value.resize(++valueIdx);
-
     value[valueIdx++].assign(str, froPtr, endPtr - froPtr);
     froPtr = endPtr;
     while (strPass(str, froPtr, ' ', ','))
@@ -163,9 +161,9 @@ bool deriveContain(const string &contain, vector<string> &value)
                 value.resize(valueIdx * 2);
             value[valueIdx++].assign(str, froPtr, endPtr - froPtr);
         }
-        cout << "[test1] Get " << value[valueIdx - 1]
-             << " at (" << froPtr << "," << endPtr
-             << ")." << endl;
+        // cout << "[test1] Get " << value[valueIdx - 1]
+        //      << " at (" << froPtr << "," << endPtr
+        //      << ")." << endl;
         froPtr = endPtr + 1;
         // if (!)
         //     cout << "froPtr: " << froPtr << endl;
