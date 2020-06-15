@@ -1,9 +1,10 @@
 // #include<cstdlib>
-#include<iostream>
+#include <iostream>
 #include <fstream>
-#include<cstring>
+#include <cstring>
 
 #include "module.h"
+#include "modulePrinter.h"
 // #include "verRead.h"
 // #include "stringFunc.h"
 
@@ -21,50 +22,25 @@ int main(int argc, char **argv)
     // string input_file_name = "case/case1/gf.v";
     // cout << strcmp(c1,c2) <<endl;
     // ifstream input (input_file_name, ifstream::in);
-    module testM =  module();
+    module testM = module();
+    // string out_file_name = ;
+    fstream fout("output/data.txt");
+    // if (!fout)
+    // {
+    //     cout << "Failed to open \"" << out_file_name << "\"!" << endl;
+    //     return false;
+    // }
 
     // cout << "test1" << endl;
 
     if (!testM.readFile(input_file_name))
-        cout << "Failed!" << endl;
-    // cout << "name: " << testM._name << endl;
-    // cout << "input: ";
-    // for (int i = 0; i < testM._in_put.size(); ++i)
-    // {
-    //     string &str = testM._input[i];
-    //     if (str.empty()) break;
-    //     cout << str << ' ';
-    // }
-    // cout << endl;
-    // cout << "output: ";
-    // for (int i = 0; i < testM.out_put.size(); ++i)
-    // {
-    //     string &str = testM.out_put[i];
-    //     if (str.empty())
-    //         break;
-    //     cout << str << ' ';
-    // }
-    // cout << endl;
-    // cout << "wire: ";
-    // for (int i = 0; i < testM.wire.size(); ++i)
-    // {
-    //     string &str = testM.wire[i];
-    //     if (str.empty())
-    //         break;
-    //     cout << str << ' ';
-    // }
-    // cout << endl;
-    // cout << "gate: ";
-    // for (int i = 0; i < testM._gateIdx; ++i)
-    // {
-    //     gate* gate1 = testM._gates[i];
-    //     // if (str.empty())
-    //     //     break;
-    //     cout << gTypeText[gate1->type] << ' '
-    //          << gate1->i1 << ' ' << gate1->i2 << ' '
-    //          << gate1->i3 << ' ' << gate1->o1 << ' ' << endl;
-    // }
-    // cout << endl;
+        cout << "Reading failed!" << endl;
+    else
+        cout << "Success..." << endl;
+
+    modulePrinter mPt = modulePrinter(&testM);
+    mPt.show();
+    // mPt.showFile("output/data.txt");
     // if (!input.is_open())
     // {
     //     cout << "Reading file " << input_file_name << " failed!" << endl;

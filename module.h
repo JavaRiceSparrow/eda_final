@@ -2,11 +2,6 @@
 #define __MODULE_H__
 
 #include <iostream>
-using namespace std;
-
-// #define DEBUG_OPT
-// #define DEBUG_OPT_SIMP
-
 ///
 #include <fstream>
 #include <vector>
@@ -16,6 +11,17 @@ using namespace std;
 #include "stringFunc.h"
 #include "verRead.h"
 ///
+
+using namespace std;
+
+
+/*
+ * debug option 
+*/
+// #define DEBUG_OPT 
+#ifdef DEBUG_OPT
+#define DEBUG_OPT_SIMP
+#endif
 
 class module
 {
@@ -65,7 +71,7 @@ bool module::readFile(string path)
         getline(input, buffer);
     }
     _port.resize(10);
-    getModuleLine(input, name, port);
+    getModuleLine(input, name, _port);
     this->_name = name;
 #ifdef DEBUG_OPT
     cout << "Name: " << this->_name << endl;
@@ -103,7 +109,7 @@ bool module::readFile(string path)
                 // cout << this->in_put[10] << endl;
                 int len = contain.size() / 10 + 1;
                 this->_input.resize(len);
-                deriveContain(contain, this->in_put);
+                deriveContain(contain, this->_input);
                 i = true;
 #ifdef DEBUG_OPT
                 cout << "Input: ";
@@ -174,11 +180,6 @@ bool module::readFile(string path)
                 cout << endl;
 #endif
             }
-            // else if (buffer == "reg")
-            // {
-            //     string contain = readUntilSemic(input);
-            //     deriveContain(contain, reg);
-            // }
             else
                 break;
         }
@@ -205,16 +206,36 @@ bool module::readFile(string path)
             buffer.clear();
             continue;
         }
-        if (buffer.size() > 1)
+        if ((buffer.size() > 1) && (buffer[0] == '/' && buffer[1] == '/'))
         {
-            if (buffer[0] == '/' && buffer[1] == '/')
-            {
-                getline(input, buffer);
+
+            getline(input, buffer);
 #ifdef DEBUG_OPT
-                cout << "comment: " << buffer << endl;
+            cout << "comment: " << buffer << endl;
 #endif
-                buffer.clear();
-                continue;
+            buffer.clear();
+            continue;
+        }
+        // else
+        {
+            // cout << "[test1]get gate..." << endl;
+            gateType gType;
+            string name;
+            vector<string> port;
+
+            if (!getGateLine(input, buffer, name, gType, port))
+            {
+                // cout << "[test1]get s gate..." << endl;
+                _speGates.push_back(new speGate(gType, name, port));
+            }
+            else
+            {
+                // cout << "[test1]get n gate..." << endl;
+                // cout << _gates.size() << ',' << _gateIdx << endl;
+                if (_gates.size() == _gateIdx)
+                    _gates.resize(_gateIdx * 2);
+
+                _gates[_gateIdx++] = new gate(gType, name, port);
             }
         }
 #ifdef DEBUG_OPT
@@ -222,29 +243,6 @@ bool module::readFile(string path)
         cout << "New gate :" << buffer << endl;
 
 #endif
-        // if (gParamNumVar[gType] && port.size() > gParamNum[gType])
-        // {
-        //     ;
-        // }
-
-        else
-        {
-            gateType gType;
-            string name;
-            vector<string> port;
-
-            if (!getGateLine(input, buffer))
-            {
-                _speGates.push_back(new speGate())
-            }
-
-            if (_gates.size() == _gateIdx)
-                _gates.resize(_gateIdx * 2);
-
-            _gates[_gateIdx++] = new gate(gType, name, port);
-        }
-
-        
 
         // cout << "test4" << endl;
     } while (input >> buffer);

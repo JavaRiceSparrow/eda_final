@@ -12,6 +12,8 @@
 
 using namespace std;
 
+void sVectorAdj(vector<string> &vec);
+
 bool deriveContain(const string &contain, vector<string> &value);
 
 string readUntilSemic(ifstream &input)
@@ -122,7 +124,10 @@ bool deriveContain(const string &contain, vector<string> &value)
     size_t valueIdx = 0;
 
     if (value.size() == 0)
-        cout << "[dC] Empty string vector!(It will crash)" << endl;
+    {
+        value.resize(1);
+        // cout << "[dC] Empty string vector!(It will crash)" << endl;
+    }
     // valueIdx = 0;
     // value.resize(10);
     strReach(str, endPtr, ' ', ',');
@@ -168,7 +173,23 @@ bool deriveContain(const string &contain, vector<string> &value)
         // if (!)
         //     cout << "froPtr: " << froPtr << endl;
     }
+    sVectorAdj(value);
     return true;
+}
+
+void sVectorAdj(vector<string> &vec)
+{
+    size_t len = vec.size();
+    int n = len;
+
+    while (--n >= 0)
+    {
+        string &str = vec[n];
+        if (!str.empty())
+            break;
+        // --n;
+    }
+    vec.resize(n);
 }
 
 #endif //__VER_READ_H__

@@ -8,6 +8,8 @@
 #include "stringFunc.h"
 #include "verRead.h"
 
+
+
 class gate;
 
 enum gateType
@@ -27,6 +29,7 @@ enum gateType
 string gTypeText[] = {"buf", "not", "and", "or", "xor", "nand", "nor", "_DC", "_HMUX"};
 int gParamNum[] = {2, 2, 3, 3, 3, 3, 3, 3, 4};
 bool gParamNumVar[] = {false, false, false, true, true, false, false, false, false};
+
 
 bool getGateLine(ifstream &input, string gTypeTxt, string &name, gateType &type, vector<string> &port);
 /*
@@ -105,18 +108,19 @@ public:
         sVectorAdj(io);
 
         this->name = name;
-        size_t ioLen = io.size();
+        // size_t ioLen = io.size();
         type = gatetype;
-        i = io;
-        i.pop_back();
-        o = io[ioLen - 1];
+        this->io = io;
+        // i = io;
+        // i.pop_back();
+        // o = io[ioLen - 1];
 
         // for (int i = 0;i<io.size())
     }
 
     // void add();
-    vector<string> i;
-    string o;
+    vector<string> io;
+    // string o;
     string name;
     gateType type;
 
@@ -127,22 +131,22 @@ bool getGateLine(ifstream &input, string gTypeTxt, string &name, gateType &type,
 {
 
     // cout << input.peek() << endl;
-    string name;
+    // string gName;
     gate *newgate = 0;
 
     // input >> buffer;
-    gateType gType = EOE;
-    bool su = false;
+    type = EOE;
+    // bool su = false;
     for (gateType iter = BUF; iter != EOE; iter = gateType(iter + 1))
     {
         if (gTypeTxt == gTypeText[iter])
         {
-            gType = iter;
-            su = true;
+            type = iter;
+            // su = true;
             break;
         }
     }
-    if (!su)
+    if (type == EOE)
     {
         cout << "[getGateLine] Wrong input \"" << gTypeTxt << "\" !" << endl;
     }
@@ -172,38 +176,18 @@ bool getGateLine(ifstream &input, string gTypeTxt, string &name, gateType &type,
             cout << "() is too many!" << endl;
         }
     }
-    if (gParamNumVar[gType] && port.size() > gParamNum[gType])
+    deriveContain(contain, port);
+    if (gParamNumVar[type] && port.size() > gParamNum[type])
     {
         return false;
     }
     else
     {
-        port.resize(gParamNum[gType]);
-        deriveContain(contain, port);
+        port.resize(gParamNum[type]);
         return true;
     }
 
-    // vector<string> port;
-    // cout << "[test3] "  << gParamNum[gType] << "" << endl;
 
-
-    // gate *ptr = new gate(gType, name, port);
-    // return ptr;
-}
-
-void sVectorAdj(vector<string> &vec)
-{
-    size_t len = vec.size();
-    int n = len;
-
-    while (--n >= 0)
-    {
-        string &str = vec[n];
-        if (!str.empty())
-            break;
-        // --n;
-    }
-    vec.resize(n);
 }
 
 #endif //__GATE_H__
