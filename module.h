@@ -43,6 +43,17 @@ public:
         // wire = new string[1000];
         // _gates = new gate *[1000];
     }
+    ~module()
+    {
+        for(int i = 0;i<_gates.size();++i)
+        {
+            delete _gates[i];
+        }
+        for (int i = 0; i < _speGates.size(); ++i)
+        {
+            delete _speGates[i];
+        }
+    }
     // bool readFile(string path);
     // void add();
     size_t _gateIdx;
@@ -246,6 +257,18 @@ bool module::readFile(string path)
 
         // cout << "test4" << endl;
     } while (input >> buffer);
+
+    // adjust gate
+    size_t len = _gates.size();
+
+    int n = len;
+    while (--n >= 0)
+    {
+        if (_gates[n])
+            break;
+        // --n;
+    }
+    _gates.resize(n + 1);
 }
 
 #endif //__MODULE_H__

@@ -28,7 +28,8 @@ enum gateType
 
 string gTypeText[] = {"buf", "not", "and", "or", "xor", "nand", "nor", "_DC", "_HMUX"};
 int gParamNum[] = {2, 2, 3, 3, 3, 3, 3, 3, 4};
-bool gParamNumVar[] = {false, false, false, true, true, false, false, false, false};
+string getTypeText(gateType type) { return gTypeText[type]; };
+// bool gParamNumVar[] = {false, false, false, true, true, false, false, false, false};
 
 
 bool getGateLine(ifstream &input, string gTypeTxt, string &name, gateType &type, vector<string> &port);
@@ -177,7 +178,7 @@ bool getGateLine(ifstream &input, string gTypeTxt, string &name, gateType &type,
         }
     }
     deriveContain(contain, port);
-    if (gParamNumVar[type] && port.size() > gParamNum[type])
+    if (port.size() > gParamNum[type]) //gParamNumVar[type] &&
     {
         return false;
     }

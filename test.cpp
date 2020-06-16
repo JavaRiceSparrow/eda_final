@@ -5,6 +5,7 @@
 
 #include "module.h"
 #include "modulePrinter.h"
+#include "moduleTranser.h"
 // #include "verRead.h"
 // #include "stringFunc.h"
 
@@ -19,19 +20,9 @@ using namespace std;
 int main(int argc, char **argv)
 {
     string input_file_name = "ver/gf.v";
-    // string input_file_name = "case/case1/gf.v";
-    // cout << strcmp(c1,c2) <<endl;
-    // ifstream input (input_file_name, ifstream::in);
     module testM = module();
     // string out_file_name = ;
-    fstream fout("output/data.txt");
-    // if (!fout)
-    // {
-    //     cout << "Failed to open \"" << out_file_name << "\"!" << endl;
-    //     return false;
-    // }
-
-    // cout << "test1" << endl;
+    ofstream fout("output/data.txt");
 
     if (!testM.readFile(input_file_name))
         cout << "Reading failed!" << endl;
@@ -39,7 +30,13 @@ int main(int argc, char **argv)
         cout << "Success..." << endl;
 
     modulePrinter mPt = modulePrinter(&testM);
-    mPt.show();
+    mPt.normalWriteFile(fout);
+    moduleTranser mTr = moduleTranser(&testM);
+    module* newM = mTr.getmodule();
+    mPt._module = &testM;
+    ofstream fout2("output/derived_data.txt");
+    mPt.normalWriteFile(fout);
+
     // mPt.showFile("output/data.txt");
     // if (!input.is_open())
     // {

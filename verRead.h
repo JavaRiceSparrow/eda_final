@@ -189,7 +189,7 @@ void sVectorAdj(vector<string> &vec)
             break;
         // --n;
     }
-    vec.resize(n);
+    vec.resize(n+1);
 }
 
 #endif //__VER_READ_H__
