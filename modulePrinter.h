@@ -19,9 +19,13 @@ public:
     bool show(ofstream &fout);
     bool normalWriteFile(ofstream &fout, bool noname = false);
     bool writeFile(string path);
-    module *_module;
+    void setModule(module *mod)
+    {
+        this->_module = mod;
+    }
 
 private:
+    module *_module;
 };
 
 bool modulePrinter::show(ofstream &fout)
@@ -33,6 +37,7 @@ bool modulePrinter::show(ofstream &fout)
         return false;
     }
     fout << "name: " << _module->_name << endl;
+    // cout << "test1" << endl;
     fout << "input: ";
     for (int i = 0; i < _module->_input.size(); ++i)
     {
@@ -217,7 +222,7 @@ bool modulePrinter::normalWriteFile(ofstream &fout, bool noname)
 
     /// speGate
     vector<speGate *> &sgateRef = _module->_speGates;
-    cout << "t1s " << sgateRef.size() << endl;
+    // cout << "t1s " << sgateRef.size() << endl;
     for (int i = 0; i < sgateRef.size(); ++i)
     {
         if (!sgateRef[i])

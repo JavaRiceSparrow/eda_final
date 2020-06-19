@@ -11,6 +11,11 @@
 
 
 class gate;
+class speGate;
+
+// void VectorAdj(vector<string> &vec);
+// void VectorAdj(vector<gate *> &vec);
+// void VectorAdj(vector<speGate *> &vec);
 
 enum gateType
 {
@@ -128,6 +133,7 @@ public:
 private:
     // gate *_gates;
 };
+
 bool getGateLine(ifstream &input, string gTypeTxt, string &name, gateType &type, vector<string> &port)
 {
 
@@ -187,8 +193,6 @@ bool getGateLine(ifstream &input, string gTypeTxt, string &name, gateType &type,
         port.resize(gParamNum[type]);
         return true;
     }
-
-
 }
 
 #endif //__GATE_H__

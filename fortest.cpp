@@ -3,8 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include "stringFunc.h"
-#include "verRead.h"
+// #include "stringFunc.h
+
 // #include "module.h"
 // #include <vector>
 
@@ -16,10 +16,10 @@ int main()
     //     cout << gTypeTest[type] << endl;
     // }
     // // cout << (' '!='a') << endl;
-    string a = "a,  b, c,2,52,43958v";
+    string a = "";
 
     string b = "1234";
     string c = a+b;
-    cout << c << endl;
+    cout << bool(a) << endl;
     
 }

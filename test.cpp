@@ -30,12 +30,23 @@ int main(int argc, char **argv)
         cout << "Success..." << endl;
 
     modulePrinter mPt = modulePrinter(&testM);
-    mPt.normalWriteFile(fout);
+    // mPt.normalWriteFile(fout);
     moduleTranser mTr = moduleTranser(&testM);
-    module* newM = mTr.getmodule();
-    mPt._module = &testM;
-    ofstream fout2("output/derived_data.txt");
-    mPt.normalWriteFile(fout);
+    // module* newM = mTr.getmodule();
+    mPt.setModule(mTr.getmodule());
+    ofstream fout2("output/gf_derived.v");
+    // cout << "Hi" << endl;
+    vector<string> &wire = mTr.getmodule()->_wire;
+    // for (int i = 0;i< wire.size();++i)
+    // {
+    //     if (wire[i] == "")
+    //     {
+    //         cout << "_ ";
+    //     }
+    //     else cout << wire[i] << " ";
+    // }
+    // cout << endl;
+    mPt.normalWriteFile(fout2);
 
     // mPt.showFile("output/data.txt");
     // if (!input.is_open())

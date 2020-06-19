@@ -25,7 +25,37 @@ two_bus getBusFromStr(string wire)
     return b1;
 }
 
-// class gate;
+void vectorAdj(vector<gate *> &vec);
+void vectorAdj(vector<speGate *> &vec);
+void vectorAdj(vector<gate *> &vec)
+{
+    size_t len = vec.size();
+    int n = len;
+
+    while (--n >= 0)
+    {
+        // string &str = vec[n];
+        if (!vec[n])
+            break;
+        // --n;
+    }
+    vec.resize(n + 1);
+}
+void vectorAdj(vector<speGate *> &vec)
+{
+    size_t len = vec.size();
+    int n = len;
+
+    while (--n >= 0)
+    {
+        // string &str = vec[n];
+        if (!vec[n])
+            break;
+        // --n;
+    }
+    vec.resize(n + 1);
+}
+
 class moduleTranser
 {
 public:
@@ -67,6 +97,14 @@ private:
         if (wireSize == _module->_wire.capacity())
         {
             _module->_wire.resize(wireSize + 100);
+#ifdef DEBUG_OPT
+            cout << "Wires resize to " << _module->_wire.size() << endl;
+#endif
+            if (_module->_wire.capacity() > 20000)
+            {
+                cout << "WTF" << endl;
+                exit(1);
+            }
         }
         string wire = wireHead + to_string(wireNum++);
         _module->_wire[wireSize++] = wire;
@@ -87,40 +125,65 @@ private:
     void addOR(two_bus i1, two_bus i2, two_bus o1);
     void addNOT(two_bus i1, two_bus o1);
 
-    void addGate(gateType type, string i1, string o1)
+    //     void addGate(gateType type, string i1, string o1)
+    //     {
+    //         vector<string> io;
+    //         io.push_back(i1);
+    //         io.push_back(o1);
+    //         // _module->_gates.push_back(new gate(type, "", io));
+    //         // size_t size = _module->_gates.size();
+
+    // #ifdef DEBUG_OPT
+    //         cout << "New Gate " << gateSize << endl;
+    // #endif
+    //         if (!gateSize)
+    //             _module->_gates.resize(10);
+    //         else if (gateSize == _module->_gates.capacity())
+    //         {
+    //             _module->_gates.resize(gateSize * 2);
+    //             if (_module->_gates.capacity() > 1000)
+    //             {
+    //                 cout << "WTF" << endl;
+    //                 exit(1);
+    //             }
+    //         }
+    //         _module->_gates[gateSize++] = new gate(type, "", io);
+    //     }
+    void addGate(gateType type, string io1, string io2, string io3 = "")
     {
         vector<string> io;
-        io.push_back(i1);
-        io.push_back(o1);
-        // _module->_gates.push_back(new gate(type, "", io));
-        // size_t size = _module->_gates.size();
-
+        io.push_back(io1);
+        io.push_back(io2);
+        if (io3 != "")
+            io.push_back(io3);
+            // _module->_gates.push_back(new gate(type, "", io));
 #ifdef DEBUG_OPT
-        cout << "New Gate " << gateSize << endl;
+        cout << "New Gate " << gateSize << "(" << getTypeText(type) << ")" << endl;
 #endif
+        // size_t size = _module->_gates.size();
         if (!gateSize)
             _module->_gates.resize(10);
         else if (gateSize == _module->_gates.capacity())
         {
             _module->_gates.resize(gateSize * 2);
+#ifdef DEBUG_OPT
+            cout << "Gates resize to " << _module->_gates.size() << endl;
+#endif
+            if (_module->_gates.capacity() > 20000)
+            {
+                cout << "WTF" << endl;
+                exit(1);
+            }
         }
+        // cout << "[test1] size: " << gateSize << ", capacity: " << _module->_gates.capacity() << endl;
+        // gate *g = new gate(type, "", io);
+        // if (gateSize == 25)
+        // {
+        //     cout << &(_module->_gates[24]) << endl;
+        //     cout << &(_module->_gates[25]) << endl;
+        //     cout << g << endl;
+        // }
         _module->_gates[gateSize++] = new gate(type, "", io);
-    }
-    void addGate(gateType type, string i1, string i2, string o1)
-    {
-        vector<string> io;
-        io.push_back(i1);
-        io.push_back(i2);
-        io.push_back(o1);
-        // _module->_gates.push_back(new gate(type, "", io));
-        size_t size = _module->_gates.size();
-        if (!size)
-            _module->_gates.resize(10);
-        else if (size == _module->_gates.capacity())
-        {
-            _module->_gates.resize(size * 2);
-        }
-        _module->_gates[size] = new gate(type, "", io);
     }
     // void addGate(gateType type, string i1, string i2, string o1);
     // void addGate(gateType type, string i1, string i2, string i3, string o1);
@@ -137,6 +200,9 @@ private:
 bool moduleTranser::transModule()
 {
     start = true;
+#ifdef DEBUG_OPT
+    cout << "Deriving name ..." << endl;
+#endif
     _module->_name = _module_old->_name;
 #ifdef DEBUG_OPT
     cout << "Deriving port ..." << endl;
@@ -183,14 +249,16 @@ bool moduleTranser::transModule()
 #endif
     vector<gate *> &gatesRef = _module_old->_gates;
     // _module_old->_gates;
-    for (int i = 0; i < gatesRef.size(); ++i)
+    for (int i = 0; i < gatesRef.size(); ++i) //, cout << "[testi] " << i << endl
     {
-#ifdef DEBUG_OPT
-        cout << "Dealing gate " << gatesRef[i]->name ;
-        cout << "(" << getTypeText(gatesRef[i]->type) << ") ..." << endl;
-#endif
+
+        // cout << "[test1]" << gatesRef[i] << endl;
         if (!gatesRef[i])
             break;
+#ifdef DEBUG_OPT
+        cout << "Dealing gate " << gatesRef[i]->name;
+        cout << "(" << getTypeText(gatesRef[i]->type) << ") ..." << endl;
+#endif
 
         switch (gatesRef[i]->type)
         {
@@ -223,10 +291,16 @@ bool moduleTranser::transModule()
             break;
 
         default:
+        {
+            // cout << "[test1] gate type failed!" << endl;
             return false;
             break;
         }
+        }
+
+        // cout << "test2" << endl;
     }
+
 #ifdef DEBUG_OPT
     cout << "Deriving new gate and wire from special gates..." << endl;
 #endif
@@ -235,6 +309,12 @@ bool moduleTranser::transModule()
     {
         if (!sgatesRef[i])
             break;
+// #ifdef DEBUG_OPT
+//         cout << "Dealing gate " << sgatesRef[i]->name;
+//         cout << "(" << getTypeText(sgatesRef[i]->type) << ") size:";
+//         cout << "(" << sgatesRef[i]->io.size() << " ..." << endl;
+// #endif
+
         switch (sgatesRef[i]->type)
         {
         case OR:
@@ -253,6 +333,11 @@ bool moduleTranser::transModule()
             break;
         }
     }
+    vectorAdj(_module->_gates);
+    vectorAdj(_module->_speGates);
+    // sVectorAdj(_module->_wire);
+
+    return true;
 }
 
 void moduleTranser::addBUF(string i1, string o1)
@@ -367,6 +452,7 @@ void moduleTranser::addDC(string a, string b, string c)
     addBaseNOT(c1, c1n);
     addBaseAND(a0, c1n, c0);
 }
+
 void moduleTranser::addMUX(string a, string b, string s, string c)
 {
     //     c0 = a0s0 + a0b0 + s1's0'b0

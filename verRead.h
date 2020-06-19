@@ -9,10 +9,13 @@
 
 // #include "module.h"
 #include "stringFunc.h"
+#include "gate.h"
 
 using namespace std;
 
 void sVectorAdj(vector<string> &vec);
+// void VectorAdj(vector<void*> &vec);
+// void VectorAdj(vector<speGate*> &vec);
 
 bool deriveContain(const string &contain, vector<string> &value);
 
@@ -177,6 +180,7 @@ bool deriveContain(const string &contain, vector<string> &value)
     return true;
 }
 
+
 void sVectorAdj(vector<string> &vec)
 {
     size_t len = vec.size();
@@ -191,5 +195,33 @@ void sVectorAdj(vector<string> &vec)
     }
     vec.resize(n+1);
 }
+// void VectorAdj(vector<void*> &vec)
+// {
+//     size_t len = vec.size();
+//     int n = len;
+
+//     while (--n >= 0)
+//     {
+//         // string &str = vec[n];
+//         if (!vec[n])
+//             break;
+//         // --n;
+//     }
+//     vec.resize(n + 1);
+// }
+// void vectorAdj(vector<speGate*> &vec)
+// {
+//     size_t len = vec.size();
+//     int n = len;
+
+//     while (--n >= 0)
+//     {
+//         // string &str = vec[n];
+//         if (!vec[n])
+//             break;
+//         // --n;
+//     }
+//     vec.resize(n + 1);
+// }
 
 #endif //__VER_READ_H__
