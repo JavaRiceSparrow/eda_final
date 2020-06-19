@@ -9,7 +9,7 @@ const string str_bit1 = "_b1";
 const string str_bit0 = "_b0";
 const string wireHead = "w_";
 
-#define DEBUG_OPT
+// #define DEBUG_OPT
 
 struct two_bus
 {
@@ -91,6 +91,13 @@ private:
 
 #ifdef DEBUG_OPT
         cout << "New Wire " << wireSize << endl;
+        int n = 0;
+        for(;n<_module->_wire.capacity();++n)
+        {
+            if (_module->_wire[n]=="")
+            break;
+        }
+        cout << "Wire size: " << n << " capacity: " << _module->_wire.capacity() << endl;
 #endif
         if (!start)
             return "";
@@ -108,6 +115,8 @@ private:
         }
         string wire = wireHead + to_string(wireNum++);
         _module->_wire[wireSize++] = wire;
+        _module->_wire.resize(wireSize+1);
+        // cout << _module->_wire.size() << endl;
         return wire;
     }
     module *_module;
@@ -125,30 +134,6 @@ private:
     void addOR(two_bus i1, two_bus i2, two_bus o1);
     void addNOT(two_bus i1, two_bus o1);
 
-    //     void addGate(gateType type, string i1, string o1)
-    //     {
-    //         vector<string> io;
-    //         io.push_back(i1);
-    //         io.push_back(o1);
-    //         // _module->_gates.push_back(new gate(type, "", io));
-    //         // size_t size = _module->_gates.size();
-
-    // #ifdef DEBUG_OPT
-    //         cout << "New Gate " << gateSize << endl;
-    // #endif
-    //         if (!gateSize)
-    //             _module->_gates.resize(10);
-    //         else if (gateSize == _module->_gates.capacity())
-    //         {
-    //             _module->_gates.resize(gateSize * 2);
-    //             if (_module->_gates.capacity() > 1000)
-    //             {
-    //                 cout << "WTF" << endl;
-    //                 exit(1);
-    //             }
-    //         }
-    //         _module->_gates[gateSize++] = new gate(type, "", io);
-    //     }
     void addGate(gateType type, string io1, string io2, string io3 = "")
     {
         vector<string> io;
@@ -175,18 +160,8 @@ private:
                 exit(1);
             }
         }
-        // cout << "[test1] size: " << gateSize << ", capacity: " << _module->_gates.capacity() << endl;
-        // gate *g = new gate(type, "", io);
-        // if (gateSize == 25)
-        // {
-        //     cout << &(_module->_gates[24]) << endl;
-        //     cout << &(_module->_gates[25]) << endl;
-        //     cout << g << endl;
-        // }
         _module->_gates[gateSize++] = new gate(type, "", io);
     }
-    // void addGate(gateType type, string i1, string i2, string o1);
-    // void addGate(gateType type, string i1, string i2, string i3, string o1);
     void addBaseAND(string i1, string i2, string o1) { addGate(AND, i1, i2, o1); }
     void addBaseOR(string i1, string i2, string o1) { addGate(OR, i1, i2, o1); }
     void addBaseXOR(string i1, string i2, string o1) { addGate(XOR, i1, i2, o1); }
@@ -252,7 +227,6 @@ bool moduleTranser::transModule()
     for (int i = 0; i < gatesRef.size(); ++i) //, cout << "[testi] " << i << endl
     {
 
-        // cout << "[test1]" << gatesRef[i] << endl;
         if (!gatesRef[i])
             break;
 #ifdef DEBUG_OPT
@@ -292,13 +266,11 @@ bool moduleTranser::transModule()
 
         default:
         {
-            // cout << "[test1] gate type failed!" << endl;
             return false;
             break;
         }
         }
 
-        // cout << "test2" << endl;
     }
 
 #ifdef DEBUG_OPT
@@ -309,11 +281,11 @@ bool moduleTranser::transModule()
     {
         if (!sgatesRef[i])
             break;
-// #ifdef DEBUG_OPT
-//         cout << "Dealing gate " << sgatesRef[i]->name;
-//         cout << "(" << getTypeText(sgatesRef[i]->type) << ") size:";
-//         cout << "(" << sgatesRef[i]->io.size() << " ..." << endl;
-// #endif
+#ifdef DEBUG_OPT
+        cout << "Dealing gate " << sgatesRef[i]->name;
+        cout << "(" << getTypeText(sgatesRef[i]->type) << ") size:";
+        cout << "(" << sgatesRef[i]->io.size() << " ..." << endl;
+#endif
 
         switch (sgatesRef[i]->type)
         {
@@ -335,7 +307,8 @@ bool moduleTranser::transModule()
     }
     vectorAdj(_module->_gates);
     vectorAdj(_module->_speGates);
-    // sVectorAdj(_module->_wire);
+    sVectorAdj(_module->_wire);
+    
 
     return true;
 }

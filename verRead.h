@@ -183,6 +183,7 @@ bool deriveContain(const string &contain, vector<string> &value)
 
 void sVectorAdj(vector<string> &vec)
 {
+    // size_t len = vec.capacity();
     size_t len = vec.size();
     int n = len;
 

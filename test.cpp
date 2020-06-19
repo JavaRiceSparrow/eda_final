@@ -19,6 +19,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+    // string input_file_name = "ver/golden.v";
     string input_file_name = "ver/gf.v";
     module testM = module();
     // string out_file_name = ;
@@ -34,18 +35,23 @@ int main(int argc, char **argv)
     moduleTranser mTr = moduleTranser(&testM);
     // module* newM = mTr.getmodule();
     mPt.setModule(mTr.getmodule());
+    // ofstream fout2("output/golden_derived.v");
     ofstream fout2("output/gf_derived.v");
     // cout << "Hi" << endl;
     vector<string> &wire = mTr.getmodule()->_wire;
-    // for (int i = 0;i< wire.size();++i)
-    // {
-    //     if (wire[i] == "")
-    //     {
-    //         cout << "_ ";
-    //     }
-    //     else cout << wire[i] << " ";
-    // }
-    // cout << endl;
+    ofstream fout3("output/test1.txt");
+    for(int i = 0;i<wire.capacity();++i)
+    {
+        fout3 << wire[i] << ", ";
+    }
+    fout3 << endl;
+    fout3 << endl;
+    for (int i = 0; i < wire.size(); ++i)
+    {
+        fout3 << wire[i] << ", ";
+    }
+    fout3 << endl;
+
     mPt.normalWriteFile(fout2);
 
     // mPt.showFile("output/data.txt");
