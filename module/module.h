@@ -35,7 +35,7 @@ public:
     vector<speGate *> _speGates;
     module()
     {
-
+        is_read = false;
         _gateIdx = 0;
         _speGates.resize(0);
         // in_put = new string[100];
@@ -45,12 +45,15 @@ public:
     }
     ~module()
     {
-        for(int i = 0;i<_gates.size();++i)
+        for(int i = 0;i<_gates.capacity();++i)
         {
+            if (_gates[i]==0) break;
             delete _gates[i];
         }
-        for (int i = 0; i < _speGates.size(); ++i)
+        for (int i = 0; i < _speGates.capacity(); ++i)
         {
+            if (_speGates[i] == 0)
+                break;
             delete _speGates[i];
         }
     }
@@ -59,13 +62,17 @@ public:
     size_t _gateIdx;
     bool readFile(string path);
 
+    bool is_read;
+
 private:
 };
 
 bool module::readFile(string path)
 {
+    if (is_read) return false;
     // string input_file_name = "inoutTest.txt";
     ifstream input(path, ifstream::in);
+    if (!input) return false;
     // vector<string> strPort ;
     // port.resize(100);
     string name;
@@ -269,6 +276,7 @@ bool module::readFile(string path)
         // --n;
     }
     _gates.resize(n + 1);
+    is_read = true;
 }
 
 #endif //__MODULE_H__

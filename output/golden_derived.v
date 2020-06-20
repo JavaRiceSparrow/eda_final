@@ -4,7 +4,10 @@ input in_b1 ,in_b0 ,a_b1 ,a_b0 ,b_b1 ,b_b0 ;
 output out_b1 ,out_b0 ;
 
 wire n2_b1 , n2_b0 , n1_b1 , n1_b0 , en1_b1 , en1_b0 , en2b_b1 , en2b_b0 , en1b_b1 , en1b_b0 , 
-		out_b1 , out_b0 , b_b1 , b_b0 , a_b1 , a_b0 , in_b1 , in_b0 ;
+		out_b1 , out_b0 , b_b1 , b_b0 , a_b1 , a_b0 , in_b1 , in_b0 , w_0 , w_1 , 
+		w_2 , w_3 , w_4 , w_5 , w_6 , w_7 , w_8 , w_9 , w_10 , w_11 , 
+		w_12 , w_13 , w_14 , w_15 , w_16 , w_17 , w_18 , w_19 , w_20 , w_21 , 
+		w_22 , w_23 , w_24 , w_25 , w_26 , w_27 ;
 or ( en1b_b1 , a_b1 , w_2 );
 not ( b_b1 , w_0 );
 and ( en1b_b0 , a_b0 , w_1 );

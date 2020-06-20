@@ -30,6 +30,7 @@ private:
 
 bool modulePrinter::show(ofstream &fout)
 {
+    if (!_module) return false;
     // ofstream fout(path);
     if (!fout)
     {
@@ -94,6 +95,8 @@ bool modulePrinter::show(ofstream &fout)
 
 bool modulePrinter::normalWriteFile(ofstream &fout, bool noname)
 {
+    if (!_module)
+        return false;
     if (!fout)
     {
         cout << "ofstream is not open!" << endl;

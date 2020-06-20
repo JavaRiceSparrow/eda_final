@@ -11,15 +11,15 @@ const string wireHead = "w_";
 
 // #define DEBUG_OPT
 
-struct two_bus
+struct bus2
 {
     string bit1;
     string bit0;
 };
 
-two_bus getBusFromStr(string wire)
+bus2 getBusFromStr(string wire)
 {
-    two_bus b1;
+    bus2 b1;
     b1.bit1 = wire + str_bit1;
     b1.bit0 = wire + str_bit0;
     return b1;
@@ -59,20 +59,17 @@ void vectorAdj(vector<speGate *> &vec)
 class moduleTranser
 {
 public:
-    moduleTranser(module *mod)
+    moduleTranser(module *oldM, module *newM)
     {
-        start = false;
-        finish = false;
-        wireNum = 0;
-        gateSize = 0;
-        _module = new module();
-        this->_module_old = mod;
+        resetModule(oldM, newM);
     }
 
     bool transModule();
     bool start, finish;
-    module *getmodule()
+    module *getModule()
     {
+        if (_module_old==0)
+        return 0;
         if (!finish)
         {
             if (!transModule())
@@ -80,7 +77,20 @@ public:
             else
                 return _module;
         }
+        return _module;
     };
+
+    void resetModule(module *oldM, module *newM)
+    {
+        start = false;
+        finish = false;
+        wireNum = 0;
+        gateSize = 0;
+        // if (_module!=0)
+        //     delete _module;
+        _module = newM;
+        this->_module_old = oldM;
+    }
 
 private:
     int wireNum;
@@ -89,38 +99,75 @@ private:
     string getNewWire()
     {
 
-#ifdef DEBUG_OPT
-        cout << "New Wire " << wireSize << endl;
-        int n = 0;
-        for(;n<_module->_wire.capacity();++n)
-        {
-            if (_module->_wire[n]=="")
-            break;
-        }
-        cout << "Wire size: " << n << " capacity: " << _module->_wire.capacity() << endl;
-#endif
+// #ifdef DEBUG_OPT
+//         cout << "New Wire " << wireSize << endl;
+//         int n = 0;
+//         for(;n<_module->_wire.capacity();++n)
+//         {
+//             if (_module->_wire[n]=="")
+//             break;
+//         }
+//         cout << "Wire size: " << n << " capacity: " << _module->_wire.capacity() << endl;
+// #endif
         if (!start)
             return "";
-        if (wireSize == _module->_wire.capacity())
-        {
-            _module->_wire.resize(wireSize + 100);
-#ifdef DEBUG_OPT
-            cout << "Wires resize to " << _module->_wire.size() << endl;
-#endif
-            if (_module->_wire.capacity() > 20000)
-            {
-                cout << "WTF" << endl;
-                exit(1);
-            }
-        }
+//         if (wireSize == _module->_wire.capacity())
+//         {
+//             _module->_wire.resize(wireSize + 100);
+// #ifdef DEBUG_OPT
+//             cout << "Wires resize to " << _module->_wire.size() << endl;
+// #endif
+//             if (_module->_wire.capacity() > 20000)
+//             {
+//                 cout << "WTF" << endl;
+//                 exit(1);
+//             }
+//         }
         string wire = wireHead + to_string(wireNum++);
-        _module->_wire[wireSize++] = wire;
-        _module->_wire.resize(wireSize+1);
-        // cout << _module->_wire.size() << endl;
+        // _module->_wire[wireSize++] = wire;
+        // _module->_wire.resize(wireSize+1);
         return wire;
     }
     module *_module;
     module *_module_old;
+
+    void addFilter(bus2 i, bus2 o)
+    {
+        // string i1 = i.bit1, a0 = a + str_bit0,
+        //        b1 = b + str_bit1, b0 = b + str_bit0,
+        //        c1 = c + str_bit1, c0 = c + str_bit0;
+        string i1n = getNewWire();
+        // addBaseOR(a1, b1, c1);
+        addBaseNOT(i.bit1, i1n);
+        addBaseBUF(i.bit1, o.bit1);
+        addBaseAND(i1n, i.bit0, o.bit0);
+    };
+    void addEqual(bus2 a, bus2 b, string o)
+    {
+        // a0b0+a1a0'+a0b1'b0'
+        string w1 = getNewWire(),
+               w2 = getNewWire(),
+               w3 = getNewWire(),
+               w4 = getNewWire(),
+               w5 = getNewWire(),
+               a0n = getNewWire(),
+               b1n = getNewWire(),
+               b0n = getNewWire();
+        // addBaseOR(a1, b1, c1);
+        addBaseNOT(a.bit0, a0n);
+        addBaseNOT(b.bit1, b1n);
+        addBaseNOT(b.bit0, b0n);
+        addBaseAND(a.bit0, b.bit0, w1);
+        addBaseAND(a.bit1, a0n, w2);
+        addBaseOR(w1,w2,w3);
+        addBaseAND(b1n, b0n, w4);
+        addBaseAND(w4, a.bit0, w5);
+        addBaseAND(w3, w5, o);
+
+        // addBaseBUF(i.bit1, o.bit1);
+        // addBaseAND(i1n, i.bit0, o.bit0);
+    };
+
     void addBUF(string i1, string o1);
     void addNOT(string i1, string o1);
     void addAND(string i1, string i2, string o1);
@@ -130,9 +177,10 @@ private:
     void addNOR(string i1, string i2, string o1);
     void addDC(string i1, string i2, string o1);
     void addMUX(string i1, string i2, string i3, string o1);
+    void addXNOR(string i1, string i2, string o1);
 
-    void addOR(two_bus i1, two_bus i2, two_bus o1);
-    void addNOT(two_bus i1, two_bus o1);
+    void addOR(bus2 i1, bus2 i2, bus2 o1);
+    void addNOT(bus2 i1, bus2 o1);
 
     void addGate(gateType type, string io1, string io2, string io3 = "")
     {
@@ -174,6 +222,8 @@ private:
 
 bool moduleTranser::transModule()
 {
+    cout << "test1" << endl;
+    if (_module->is_read) return false;
     start = true;
 #ifdef DEBUG_OPT
     cout << "Deriving name ..." << endl;
@@ -263,6 +313,9 @@ bool moduleTranser::transModule()
         case MUX:
             addMUX(gatesRef[i]->i1, gatesRef[i]->i2, gatesRef[i]->i3, gatesRef[i]->o1);
             break;
+        case XNOR:
+            addXNOR(gatesRef[i]->i1, gatesRef[i]->i2, gatesRef[i]->o1);
+            break;
 
         default:
         {
@@ -307,7 +360,17 @@ bool moduleTranser::transModule()
     }
     vectorAdj(_module->_gates);
     vectorAdj(_module->_speGates);
-    sVectorAdj(_module->_wire);
+
+    size_t w_size = _module->_wire.size();
+    _module->_wire.resize(w_size+wireNum);
+    
+
+    for (int i = 0; i < wireNum; ++i)
+    {
+        _module->_wire[w_size+i] = wireHead + to_string(i);
+    }
+
+    // sVectorAdj(_module->_wire);
     
 
     return true;
@@ -397,7 +460,7 @@ void moduleTranser::addNOR(string a, string b, string c)
     addBaseNOT(n1, c1);
     addBaseNOT(n0, c0);
 }
-// void moduleTranser::addNOR(two_bus a, two_bus b, two_bus c)
+// void moduleTranser::addNOR(bus2 a, bus2 b, bus2 c)
 // {
 //     string a1 = a.bit1, a0 = a.bit0,
 //            b1 = b.bit1, b0 = b.bit0,
@@ -489,8 +552,20 @@ void moduleTranser::addMUX(string a, string b, string s, string c)
     // addBaseNOT(a0, n5);
     addBaseNOT(c0, n6);
 }
+void moduleTranser::addXNOR(string a, string b, string c)
+{
+    string a1 = a + str_bit1, a0 = a + str_bit0,
+           b1 = b + str_bit1, b0 = b + str_bit0,
+           c1 = c + str_bit1, c0 = c + str_bit0;
+    string w1 = getNewWire(),
+           c1n = getNewWire();
+    addBaseAND(a1, b1, w1);
+    addBaseXOR(w1, b0, c1);
+    addBaseNOT(c1, c1n);
+    addBaseAND(a0, c1n, c0);
+}
 
-void moduleTranser::addOR(two_bus a, two_bus b, two_bus c)
+void moduleTranser::addOR(bus2 a, bus2 b, bus2 c)
 {
     string a1 = a.bit1, a0 = a.bit0,
            b1 = b.bit1, b0 = b.bit0,
@@ -502,7 +577,7 @@ void moduleTranser::addOR(two_bus a, two_bus b, two_bus c)
     addBaseNOT(c0, c0n);
     addBaseAND(c0n, w1, c1);
 }
-void moduleTranser::addNOT(two_bus a, two_bus b)
+void moduleTranser::addNOT(bus2 a, bus2 b)
 {
     addBaseBUF(a.bit1, b.bit1);
     // addBaseNOT(i1 + str_bit0, o1 + str_bit0);
@@ -522,11 +597,11 @@ void moduleTranser::addSpeOR(speGate *gate)
     {
         cout << "This shouldn't happen..." << endl;
     }
-    two_bus io_bus[ioSize];
+    bus2 io_bus[ioSize];
     for (int idx = 0; idx < ioSize; ++idx)
         io_bus[idx] = getBusFromStr(gate->io[idx]);
     // i_port.pop_back();
-    two_bus w_bus[ioSize - 1];
+    bus2 w_bus[ioSize - 1];
 
     w_bus[0] = io_bus[0];
     w_bus[ioSize - 2] = io_bus[ioSize - 1];
@@ -550,11 +625,11 @@ void moduleTranser::addSpeNOR(speGate *gate)
     {
         cout << "This shouldn't happen..." << endl;
     }
-    two_bus io_bus[ioSize];
+    bus2 io_bus[ioSize];
     for (int idx = 0; idx < ioSize; ++idx)
         io_bus[idx] = getBusFromStr(gate->io[idx]);
     // i_port.pop_back();
-    two_bus w_bus[ioSize - 1];
+    bus2 w_bus[ioSize - 1];
 
     w_bus[0] = io_bus[0];
     // w_bus[ioSize - 2] = io_bus[ioSize - 1];

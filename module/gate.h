@@ -28,11 +28,12 @@ enum gateType
     NOR,
     DC,
     MUX,
+    XNOR,
     EOE
 };
 
-string gTypeText[] = {"buf", "not", "and", "or", "xor", "nand", "nor", "_DC", "_HMUX"};
-int gParamNum[] = {2, 2, 3, 3, 3, 3, 3, 3, 4};
+string gTypeText[] = {"buf", "not", "and", "or", "xor", "nand", "nor", "_DC", "_HMUX", "xnor"};
+int gParamNum[] = {2, 2, 3, 3, 3, 3, 3, 3, 4, 3};
 string getTypeText(gateType type) { return gTypeText[type]; };
 // bool gParamNumVar[] = {false, false, false, true, true, false, false, false, false};
 
