@@ -38,7 +38,6 @@ bool modulePrinter::show(ofstream &fout)
         return false;
     }
     fout << "name: " << _module->_name << endl;
-    // cout << "test1" << endl;
     fout << "input: ";
     for (int i = 0; i < _module->_input.size(); ++i)
     {

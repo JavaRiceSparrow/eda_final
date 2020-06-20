@@ -19,106 +19,147 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    for (int i = 1;i<=9;++i)
+    // int i = 1;
+    for (size_t i = 1; i <= 9; ++i, cout << i << endl)
     {
+        // cout << "test3" << endl;
         string gf_path = "cases/case" + to_string(i) + "/gf.v";
         string rf_path = "cases/case" + to_string(i) + "/rf.v";
         string gfd_path = "output/case" + to_string(i) + "/gf.v";
         string rfd_path = "output/case" + to_string(i) + "/rf.v";
-        module testM = module();
+        module *testM = new module();
         module *gf_m = new module(), *rf_m = new module();
 
-        if (!testM.readFile(gf_path))
+        if (!testM->readFile(gf_path))
             cout << "Reading " + gf_path + " failed!" << endl;
 
-        moduleTranser *mTr = new moduleTranser(&testM, gf_m);
+        moduleTranser *mTr = new moduleTranser(testM, gf_m);
         modulePrinter* mPt = new modulePrinter(gf_m);
         // cout << "test1" << endl;
         // cout << &mTr << endl;
         // cout << gf_m->_port.size() << endl;
-        mPt->setModule( mTr->getModule());
+        mPt->setModule(mTr->getModule());
+        cout << "[test4] transing gf" << i << "" << endl;
         ofstream gfd_output(gfd_path);
 
         mPt->normalWriteFile(gfd_output);
-        cout << "test1" << endl;
+        cout << "[test4] printed gf" << i << "" << endl;
 
         // if (!testM.readFile(gf_path))
         //     cout << "Reading " + gf_path + " failed!" << endl;
 
-        module testM2 = module();
-        if (!testM2.readFile(rf_path))
+        // module testM2 = module();
+        delete testM;
+        cout << "Hi" << endl;
+        testM = new module();
+        if (!testM->readFile(rf_path))
             cout << "Reading " + rf_path + " failed!" << endl;
 
-        mTr->resetModule(&testM2, rf_m);
+        mTr->resetModule(testM, rf_m);
         // modulePrinter mPt = modulePrinter(0);
         mPt->setModule(mTr->getModule());
+        cout << "[test4] transing rf" << i << "" << endl;
         ofstream rfd_output(rfd_path);
         mPt->normalWriteFile(rfd_output);
+        cout << "[test4] printed rf" << i << "" << endl;
 
+        delete testM;
         delete gf_m, rf_m;
         delete mTr;
         delete mPt;
+        cout << "[test4] finish and clean " << i << endl;
     }
-    // string input_file_name = "ver/golden.v";
-    // // string input_file_name = "ver/gf.v";
-    // module testM = module();
-    // // string out_file_name = ;
-    // ofstream fout("output/data.txt");
-
-    // if (!testM.readFile(input_file_name))
-    //     cout << "Reading failed!" << endl;
-    // else
-    //     cout << "Success..." << endl;
-
-    // modulePrinter mPt = modulePrinter(&testM);
-    // // mPt.normalWriteFile(fout);
-    // moduleTranser mTr = moduleTranser(&testM);
-    // // module* newM = mTr.getmodule();
-    // // mPt.setModule(mTr.getmodule());
-    // ofstream fout2("output/golden_derived.v");
-    // // ofstream fout2("output/gf_derived.v");
-    // // cout << "Hi" << endl;
-    // vector<string> &wire = mTr.getmodule()->_wire;
-    // // // ofstream fout3("output/test1.txt");
-    // // // for(int i = 0;i<wire.capacity();++i)
-    // // // {
-    // // //     fout3 << wire[i] << ", ";
-    // // // }
-    // // // fout3 << endl;
-
-    // mPt.normalWriteFile(fout2);
-
-    // mPt.showFile("output/data.txt");
-    // if (!input.is_open())
+    // i = 2;
+    // cout << i << endl;
     // {
-    //     cout << "Reading file " << input_file_name << " failed!" << endl;
-    //     return 0;
+    //     cout << "test3" << endl;
+    //     string gf_path = "cases/case" + to_string(i) + "/gf.v";
+    //     string rf_path = "cases/case" + to_string(i) + "/rf.v";
+    //     string gfd_path = "output/case" + to_string(i) + "/gf.v";
+    //     string rfd_path = "output/case" + to_string(i) + "/rf.v";
+    //     module testM = module();
+    //     module *gf_m = new module(), *rf_m = new module();
+
+    //     if (!testM.readFile(gf_path))
+    //         cout << "Reading " + gf_path + " failed!" << endl;
+
+    //     moduleTranser *mTr = new moduleTranser(&testM, gf_m);
+    //     modulePrinter *mPt = new modulePrinter(gf_m);
+    //     // cout << "test1" << endl;
+    //     // cout << &mTr << endl;
+    //     // cout << gf_m->_port.size() << endl;
+    //     mPt->setModule(mTr->getModule());
+    //     cout << "[test4] transing gf" << i << "" << endl;
+    //     ofstream gfd_output(gfd_path);
+
+    //     mPt->normalWriteFile(gfd_output);
+    //     cout << "[test4] printed gf" << i << "" << endl;
+
+    //     // if (!testM.readFile(gf_path))
+    //     //     cout << "Reading " + gf_path + " failed!" << endl;
+
+    //     module testM2 = module();
+    //     if (!testM2.readFile(rf_path))
+    //         cout << "Reading " + rf_path + " failed!" << endl;
+
+    //     mTr->resetModule(&testM2, rf_m);
+    //     // modulePrinter mPt = modulePrinter(0);
+    //     mPt->setModule(mTr->getModule());
+    //     cout << "[test4] transing rf" << i << "" << endl;
+    //     ofstream rfd_output(rfd_path);
+    //     mPt->normalWriteFile(rfd_output);
+    //     cout << "[test4] printed rf" << i << "" << endl;
+
+    //     delete gf_m, rf_m;
+    //     delete mTr;
+    //     delete mPt;
+    //     cout << "[test4] finish and clean " << i << endl;
     // }
-    // char buffer[500];
-    // string port[200];
-    // if (!getModuleLine(input, port))
+
+    // for (size_t i = 1; i <= 9; ++i, cout << i << endl)
     // {
-    //     cout << "" << endl;
+    //     cout << "test3" << endl;
+    //     string gf_path = "cases/case" + to_string(i) + "/gf.v";
+    //     string rf_path = "cases/case" + to_string(i) + "/rf.v";
+    //     string gfd_path = "output/case" + to_string(i) + "/gf.v";
+    //     string rfd_path = "output/case" + to_string(i) + "/rf.v";
+    //     module testM = module();
+    //     module *gf_m = new module(), *rf_m = new module();
+
+    //     if (!testM.readFile(gf_path))
+    //         cout << "Reading " + gf_path + " failed!" << endl;
+
+    //     moduleTranser *mTr = new moduleTranser(&testM, gf_m);
+    //     modulePrinter *mPt = new modulePrinter(gf_m);
+    //     // cout << "test1" << endl;
+    //     // cout << &mTr << endl;
+    //     // cout << gf_m->_port.size() << endl;
+    //     mPt->setModule(mTr->getModule());
+    //     cout << "[test4] transing gf" << i << "" << endl;
+    //     ofstream gfd_output(gfd_path);
+
+    //     mPt->normalWriteFile(gfd_output);
+    //     cout << "[test4] printed gf" << i << "" << endl;
+
+    //     // if (!testM.readFile(gf_path))
+    //     //     cout << "Reading " + gf_path + " failed!" << endl;
+
+    //     module testM2 = module();
+    //     if (!testM2.readFile(rf_path))
+    //         cout << "Reading " + rf_path + " failed!" << endl;
+
+    //     mTr->resetModule(&testM2, rf_m);
+    //     // modulePrinter mPt = modulePrinter(0);
+    //     mPt->setModule(mTr->getModule());
+    //     cout << "[test4] transing rf" << i << "" << endl;
+    //     ofstream rfd_output(rfd_path);
+    //     mPt->normalWriteFile(rfd_output);
+    //     cout << "[test4] printed rf" << i << "" << endl;
+
+    //     delete gf_m, rf_m;
+    //     delete mTr;
+    //     delete mPt;
+    //     cout << "[test4] finish and clean " << i << endl;
     // }
-    // string buffer;
-    // size_t froPtr = 0, endPtr = 0;
-
-    // input >> buffer;
-    // if (buffer != "module")
-    // {
-    //     cout << buffer << endl;
-    //     cout << "It's not a module!" << endl;
-    // }
-    // string port[100];
-
-    // while (getline(input, buffer))
-    // {
-    //     ;
-    // }
-    // cout << buffer << endl;
-
-    // while()
-
-    // input.close();
     return 0;
 }

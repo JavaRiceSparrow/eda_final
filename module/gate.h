@@ -98,6 +98,30 @@ public:
         }
     }
 
+    gate copy()
+    {
+        size_t ioLen = gParamNum[type];
+        vector<string> new_io;
+        new_io.push_back(i1);
+        // o1 = io[ioLen - 1];
+        if (ioLen > 2)
+        {
+            new_io.push_back(i2);
+            if (ioLen > 3)
+            {
+                new_io.push_back(i3);
+            }
+        }
+        new_io.push_back(o1);
+        gate *g = new gate(type, name, new_io);
+        // g->name = name;
+        // g->i1 = i1;
+        // g->i2 = i2;
+        // g->i3 = i3;
+        // g->o1 = o1;
+        // g->type = type;
+        return *g;
+    }
     // void add();
     string i1, i2, i3, o1;
     string name;
@@ -123,6 +147,14 @@ public:
         // o = io[ioLen - 1];
 
         // for (int i = 0;i<io.size())
+    }
+    speGate copy()
+    {
+        speGate *g = new speGate(type, name, io);
+        // g->name = name;
+        // g->io = io; //.copy()
+        // g->type = type;
+        return *g;
     }
 
     // void add();

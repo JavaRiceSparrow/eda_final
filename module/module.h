@@ -45,12 +45,12 @@ public:
     }
     ~module()
     {
-        for(int i = 0;i<_gates.capacity();++i)
+        for(int i = 0;i<_gates.size();++i)
         {
             if (_gates[i]==0) break;
             delete _gates[i];
         }
-        for (int i = 0; i < _speGates.capacity(); ++i)
+        for (int i = 0; i < _speGates.size(); ++i)
         {
             if (_speGates[i] == 0)
                 break;

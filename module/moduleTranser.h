@@ -8,6 +8,7 @@ using namespace std;
 const string str_bit1 = "_b1";
 const string str_bit0 = "_b0";
 const string wireHead = "w_";
+const size_t gate_MAX = 1000000;
 
 // #define DEBUG_OPT
 
@@ -17,7 +18,7 @@ struct bus2
     string bit0;
 };
 
-bus2 getBusFromStr(string wire)
+bus2 to_bus2(string wire)
 {
     bus2 b1;
     b1.bit1 = wire + str_bit1;
@@ -99,30 +100,19 @@ private:
     string getNewWire()
     {
 
-// #ifdef DEBUG_OPT
-//         cout << "New Wire " << wireSize << endl;
-//         int n = 0;
-//         for(;n<_module->_wire.capacity();++n)
-//         {
-//             if (_module->_wire[n]=="")
-//             break;
-//         }
-//         cout << "Wire size: " << n << " capacity: " << _module->_wire.capacity() << endl;
-// #endif
+#ifdef DEBUG_OPT
+        cout << "New Wire " << wireNum << endl; //+_module->_wire.size()
+
+        // int n = 0;
+        // for(;n<_module->_wire.capacity();++n)
+        // {
+        //     if (_module->_wire[n]=="")
+        //     break;
+        // }
+        // cout << "Wire size: " << n << " capacity: " << _module->_wire.capacity() << endl;
+#endif
         if (!start)
             return "";
-//         if (wireSize == _module->_wire.capacity())
-//         {
-//             _module->_wire.resize(wireSize + 100);
-// #ifdef DEBUG_OPT
-//             cout << "Wires resize to " << _module->_wire.size() << endl;
-// #endif
-//             if (_module->_wire.capacity() > 20000)
-//             {
-//                 cout << "WTF" << endl;
-//                 exit(1);
-//             }
-//         }
         string wire = wireHead + to_string(wireNum++);
         // _module->_wire[wireSize++] = wire;
         // _module->_wire.resize(wireSize+1);
@@ -168,19 +158,19 @@ private:
         // addBaseAND(i1n, i.bit0, o.bit0);
     };
 
-    void addBUF(string i1, string o1);
-    void addNOT(string i1, string o1);
-    void addAND(string i1, string i2, string o1);
-    void addOR(string i1, string i2, string o1);
-    void addXOR(string i1, string i2, string o1);
-    void addNAND(string i1, string i2, string o1);
-    void addNOR(string i1, string i2, string o1);
-    void addDC(string i1, string i2, string o1);
-    void addMUX(string i1, string i2, string i3, string o1);
-    void addXNOR(string i1, string i2, string o1);
-
-    void addOR(bus2 i1, bus2 i2, bus2 o1);
+    void addBUF(bus2 i1, bus2 o1);
     void addNOT(bus2 i1, bus2 o1);
+    void addAND(bus2 i1, bus2 i2, bus2 o1);
+    void addOR(bus2 i1, bus2 i2, bus2 o1);
+    void addXOR(bus2 i1, bus2 i2, bus2 o1);
+    void addNAND(bus2 i1, bus2 i2, bus2 o1);
+    void addNOR(bus2 i1, bus2 i2, bus2 o1);
+    void addDC(bus2 i1, bus2 i2, bus2 o1);
+    void addMUX(bus2 i1, bus2 i2, bus2 i3, bus2 o1);
+    void addXNOR(bus2 i1, bus2 i2, bus2 o1);
+
+    // void addOR(bus2 i1, bus2 i2, bus2 o1);
+    // void addNOT(bus2 i1, bus2 o1);
 
     void addGate(gateType type, string io1, string io2, string io3 = "")
     {
@@ -202,9 +192,9 @@ private:
 #ifdef DEBUG_OPT
             cout << "Gates resize to " << _module->_gates.size() << endl;
 #endif
-            if (_module->_gates.capacity() > 20000)
+            if (_module->_gates.capacity() > gate_MAX)
             {
-                cout << "WTF" << endl;
+                cout << "Gates is exceed " << gate_MAX << "!" << endl;
                 exit(1);
             }
         }
@@ -218,11 +208,12 @@ private:
 
     void addSpeOR(speGate *gate);
     void addSpeNOR(speGate *gate);
+    void addSpeAND(speGate *gate);
 };
 
 bool moduleTranser::transModule()
 {
-    cout << "test1" << endl;
+    // cout << "test1" << endl;
     if (_module->is_read) return false;
     start = true;
 #ifdef DEBUG_OPT
@@ -287,34 +278,35 @@ bool moduleTranser::transModule()
         switch (gatesRef[i]->type)
         {
         case BUF:
-            addBUF(gatesRef[i]->i1, gatesRef[i]->o1);
+            addBUF(to_bus2(gatesRef[i]->i1), to_bus2(gatesRef[i]->o1));
             break;
         case NOT:
-            addNOT(gatesRef[i]->i1, gatesRef[i]->o1);
+            addNOT(to_bus2(gatesRef[i]->i1), to_bus2(gatesRef[i]->o1));
             break;
         case AND:
-            addAND(gatesRef[i]->i1, gatesRef[i]->i2, gatesRef[i]->o1);
+            addAND(to_bus2(gatesRef[i]->i1), to_bus2(gatesRef[i]->i2), to_bus2(gatesRef[i]->o1));
             break;
         case OR:
-            addOR(gatesRef[i]->i1, gatesRef[i]->i2, gatesRef[i]->o1);
+            addOR(to_bus2(gatesRef[i]->i1), to_bus2(gatesRef[i]->i2), to_bus2(gatesRef[i]->o1));
             break;
         case XOR:
-            addXOR(gatesRef[i]->i1, gatesRef[i]->i2, gatesRef[i]->o1);
+            addXOR(to_bus2(gatesRef[i]->i1), to_bus2(gatesRef[i]->i2), to_bus2(gatesRef[i]->o1));
             break;
         case NAND:
-            addNAND(gatesRef[i]->i1, gatesRef[i]->i2, gatesRef[i]->o1);
+            addNAND(to_bus2(gatesRef[i]->i1), to_bus2(gatesRef[i]->i2), to_bus2(gatesRef[i]->o1));
             break;
         case NOR:
-            addNOR(gatesRef[i]->i1, gatesRef[i]->i2, gatesRef[i]->o1);
+            addNOR(to_bus2(gatesRef[i]->i1), to_bus2(gatesRef[i]->i2), to_bus2(gatesRef[i]->o1));
             break;
         case DC:
-            addDC(gatesRef[i]->i1, gatesRef[i]->i2, gatesRef[i]->o1);
+            addDC(to_bus2(gatesRef[i]->i1), to_bus2(gatesRef[i]->i2), to_bus2(gatesRef[i]->o1));
             break;
         case MUX:
-            addMUX(gatesRef[i]->i1, gatesRef[i]->i2, gatesRef[i]->i3, gatesRef[i]->o1);
+            addMUX(to_bus2(gatesRef[i]->i1), to_bus2(gatesRef[i]->i2), 
+            to_bus2(gatesRef[i]->i3), to_bus2(gatesRef[i]->o1));
             break;
         case XNOR:
-            addXNOR(gatesRef[i]->i1, gatesRef[i]->i2, gatesRef[i]->o1);
+            addXNOR(to_bus2(gatesRef[i]->i1), to_bus2(gatesRef[i]->i2), to_bus2(gatesRef[i]->o1));
             break;
 
         default:
@@ -337,7 +329,7 @@ bool moduleTranser::transModule()
 #ifdef DEBUG_OPT
         cout << "Dealing gate " << sgatesRef[i]->name;
         cout << "(" << getTypeText(sgatesRef[i]->type) << ") size:";
-        cout << "(" << sgatesRef[i]->io.size() << " ..." << endl;
+        cout << "(" << sgatesRef[i]->io.size() << ") ..." << endl;
 #endif
 
         switch (sgatesRef[i]->type)
@@ -350,6 +342,11 @@ bool moduleTranser::transModule()
         case NOR:
         {
             addSpeNOR(sgatesRef[i]);
+            break;
+        }
+        case AND:
+        {
+            addSpeAND(sgatesRef[i]);
             break;
         }
 
@@ -376,26 +373,26 @@ bool moduleTranser::transModule()
     return true;
 }
 
-void moduleTranser::addBUF(string i1, string o1)
+void moduleTranser::addBUF(bus2 a, bus2 b)
 {
-    addBaseBUF(i1 + str_bit1, o1 + str_bit1);
-    addBaseBUF(i1 + str_bit0, o1 + str_bit0);
+    addBaseBUF(a.bit1, b.bit1);
+    addBaseBUF(a.bit0, b.bit0);
 }
-void moduleTranser::addNOT(string i1, string o1)
+void moduleTranser::addNOT(bus2 a, bus2 b)
 {
-    addBaseBUF(i1 + str_bit1, o1 + str_bit1);
+    addBaseBUF(a.bit1, b.bit1);
     // addBaseNOT(i1 + str_bit0, o1 + str_bit0);
     string w1n = getNewWire();
     string w0n = getNewWire();
-    addBaseNOT(i1 + str_bit1, w1n);
-    addBaseNOT(i1 + str_bit0, w0n);
-    addBaseAND(w1n, w0n, o1 + str_bit0);
+    addBaseNOT(a.bit1, w1n);
+    addBaseNOT(a.bit0, w0n);
+    addBaseAND(w1n, w0n, b.bit0);
 }
-void moduleTranser::addAND(string a, string b, string c)
+void moduleTranser::addAND(bus2 a, bus2 b, bus2 c)
 {
-    string a1 = a + str_bit1, a0 = a + str_bit0,
-           b1 = b + str_bit1, b0 = b + str_bit0,
-           c1 = c + str_bit1, c0 = c + str_bit0;
+    string a1 = a.bit1, a0 = a.bit0,
+           b1 = b.bit1, b0 = b.bit0,
+           c1 = c.bit1, c0 = c.bit0;
     string c1n = getNewWire(),
            w0 = getNewWire();
     addBaseOR(a1, b1, c1);
@@ -403,11 +400,12 @@ void moduleTranser::addAND(string a, string b, string c)
     addBaseAND(a0, b0, w0);
     addBaseAND(c1n, w0, c0);
 }
-void moduleTranser::addOR(string a, string b, string c)
+
+void moduleTranser::addOR(bus2 a, bus2 b, bus2 c)
 {
-    string a1 = a + str_bit1, a0 = a + str_bit0,
-           b1 = b + str_bit1, b0 = b + str_bit0,
-           c1 = c + str_bit1, c0 = c + str_bit0;
+    string a1 = a.bit1, a0 = a.bit0,
+           b1 = b.bit1, b0 = b.bit0,
+           c1 = c.bit1, c0 = c.bit0;
     string w1 = getNewWire(),
            c0n = getNewWire();
     addBaseOR(a1, b1, w1);
@@ -415,11 +413,11 @@ void moduleTranser::addOR(string a, string b, string c)
     addBaseNOT(c0, c0n);
     addBaseAND(c0n, w1, c1);
 }
-void moduleTranser::addXOR(string a, string b, string c)
+void moduleTranser::addXOR(bus2 a, bus2 b, bus2 c)
 {
-    string a1 = a + str_bit1, a0 = a + str_bit0,
-           b1 = b + str_bit1, b0 = b + str_bit0,
-           c1 = c + str_bit1, c0 = c + str_bit0;
+    string a1 = a.bit1, a0 = a.bit0,
+           b1 = b.bit1, b0 = b.bit0,
+           c1 = c.bit1, c0 = c.bit0;
     string w0x = getNewWire(),
            w0xn = getNewWire();
     addBaseOR(a1, b1, c1);
@@ -428,37 +426,21 @@ void moduleTranser::addXOR(string a, string b, string c)
     addBaseAND(w0xn, c1, c0);
 }
 
-void moduleTranser::addNAND(string a, string b, string c)
+void moduleTranser::addNAND(bus2 a, bus2 b, bus2 c)
 {
-    string a1 = a + str_bit1, a0 = a + str_bit0,
-           b1 = b + str_bit1, b0 = b + str_bit0,
-           c1 = c + str_bit1, c0 = c + str_bit0;
-    string c1n = getNewWire(),
-           w0 = getNewWire(),
-           n1 = getNewWire(),
-           n0 = getNewWire();
-    addBaseOR(a1, b1, n1);
-    addBaseNOT(c1, c1n);
-    addBaseAND(a0, b0, w0);
-    addBaseAND(c1n, w0, n0);
-    addBaseNOT(n1, c1);
-    addBaseNOT(n0, c0);
+    bus2 and_a;
+    and_a.bit1 = getNewWire(),
+    and_a.bit1 = getNewWire();
+    addAND(a, b, and_a);
+    addNOT(and_a, c);
 }
-void moduleTranser::addNOR(string a, string b, string c)
+void moduleTranser::addNOR(bus2 a, bus2 b, bus2 c)
 {
-    string a1 = a + str_bit1, a0 = a + str_bit0,
-           b1 = b + str_bit1, b0 = b + str_bit0,
-           c1 = c + str_bit1, c0 = c + str_bit0;
-    string w1 = getNewWire(),
-           c0n = getNewWire(),
-           n1 = getNewWire(),
-           n0 = getNewWire();
-    addBaseOR(a1, b1, w1);
-    addBaseOR(a0, b0, n0);
-    addBaseNOT(c0, c0n);
-    addBaseAND(c0n, w1, n1);
-    addBaseNOT(n1, c1);
-    addBaseNOT(n0, c0);
+    bus2 or_a;
+    or_a.bit1 = getNewWire(),
+    or_a.bit1 = getNewWire();
+    addAND(a, b, or_a);
+    addNOT(or_a, c);
 }
 // void moduleTranser::addNOR(bus2 a, bus2 b, bus2 c)
 // {
@@ -476,11 +458,11 @@ void moduleTranser::addNOR(string a, string b, string c)
 //     addBaseNOT(n1, c1);
 //     addBaseNOT(n0, c0);
 // }
-void moduleTranser::addDC(string a, string b, string c)
+void moduleTranser::addDC(bus2 a, bus2 b, bus2 c)
 {
-    string a1 = a + str_bit1, a0 = a + str_bit0,
-           b1 = b + str_bit1, b0 = b + str_bit0,
-           c1 = c + str_bit1, c0 = c + str_bit0;
+    string a1 = a.bit1, a0 = a.bit0,
+           b1 = b.bit1, b0 = b.bit0,
+           c1 = c.bit1, c0 = c.bit0;
     string w1 = getNewWire(),
            c1n = getNewWire();
     addBaseAND(a1, b1, w1);
@@ -489,7 +471,7 @@ void moduleTranser::addDC(string a, string b, string c)
     addBaseAND(a0, c1n, c0);
 }
 
-void moduleTranser::addMUX(string a, string b, string s, string c)
+void moduleTranser::addMUX(bus2 a, bus2 b, bus2 s, bus2 c)
 {
     //     c0 = a0s0 + a0b0 + s1's0'b0
     //     c1 = (s0'b1 + a1s0 + s1a1' + s0'b0 + a1a0)*c0'
@@ -503,10 +485,10 @@ void moduleTranser::addMUX(string a, string b, string s, string c)
     //                           1   2
     //              3                4     5             6
 
-    string a1 = a + str_bit1, a0 = a + str_bit0,
-           b1 = b + str_bit1, b0 = b + str_bit0,
-           s1 = s + str_bit1, s0 = s + str_bit0,
-           c1 = c + str_bit1, c0 = c + str_bit0;
+    string a1 = a.bit1, a0 = a.bit0,
+           b1 = b.bit1, b0 = b.bit0,
+           s1 = s.bit1, s0 = s.bit0,
+           c1 = c.bit1, c0 = c.bit0;
     string d1 = getNewWire(),
            d2 = getNewWire(),
            d3 = getNewWire(),
@@ -552,41 +534,51 @@ void moduleTranser::addMUX(string a, string b, string s, string c)
     // addBaseNOT(a0, n5);
     addBaseNOT(c0, n6);
 }
-void moduleTranser::addXNOR(string a, string b, string c)
+void moduleTranser::addXNOR(bus2 a, bus2 b, bus2 c)
 {
-    string a1 = a + str_bit1, a0 = a + str_bit0,
-           b1 = b + str_bit1, b0 = b + str_bit0,
-           c1 = c + str_bit1, c0 = c + str_bit0;
-    string w1 = getNewWire(),
-           c1n = getNewWire();
-    addBaseAND(a1, b1, w1);
-    addBaseXOR(w1, b0, c1);
-    addBaseNOT(c1, c1n);
-    addBaseAND(a0, c1n, c0);
+    // string a1 = a.bit1, a0 = a.bit0,
+    //        b1 = b.bit1, b0 = b.bit0,
+    //        c1 = c.bit1, c0 = c.bit0;
+    bus2 xor_ans;
+    xor_ans.bit1 = getNewWire(),
+    xor_ans.bit0 = getNewWire();
+    addXOR(a,b,xor_ans);
+    addNOT(xor_ans, c);
+
+    // addBaseOR(a1, b1, c1n);
+    // addBaseXOR(a0, b0, w0x);
+    // addBaseNOT(w0x, w0xn);
+    // addBaseAND(w0xn, c1, c0n);
+    // string w1n = getNewWire();
+    // string w0n = getNewWire();
+    // addBaseBUF(c1n, c1);
+    // addBaseNOT(c1n, w1n);
+    // addBaseNOT(c0n, w0n);
+    // addBaseAND(w1n, w0n, c0);
 }
 
-void moduleTranser::addOR(bus2 a, bus2 b, bus2 c)
-{
-    string a1 = a.bit1, a0 = a.bit0,
-           b1 = b.bit1, b0 = b.bit0,
-           c1 = c.bit1, c0 = c.bit0;
-    string w1 = getNewWire(),
-           c0n = getNewWire();
-    addBaseOR(a1, b1, w1);
-    addBaseOR(a0, b0, c0);
-    addBaseNOT(c0, c0n);
-    addBaseAND(c0n, w1, c1);
-}
-void moduleTranser::addNOT(bus2 a, bus2 b)
-{
-    addBaseBUF(a.bit1, b.bit1);
-    // addBaseNOT(i1 + str_bit0, o1 + str_bit0);
-    string w1n = getNewWire();
-    string w0n = getNewWire();
-    addBaseNOT(a.bit1, w1n);
-    addBaseNOT(a.bit0, w0n);
-    addBaseAND(w1n, w0n, b.bit0);
-}
+// void moduleTranser::addOR(bus2 a, bus2 b, bus2 c)
+// {
+//     string a1 = a.bit1, a0 = a.bit0,
+//            b1 = b.bit1, b0 = b.bit0,
+//            c1 = c.bit1, c0 = c.bit0;
+//     string w1 = getNewWire(),
+//            c0n = getNewWire();
+//     addBaseOR(a1, b1, w1);
+//     addBaseOR(a0, b0, c0);
+//     addBaseNOT(c0, c0n);
+//     addBaseAND(c0n, w1, c1);
+// }
+// void moduleTranser::addNOT(bus2 a, bus2 b)
+// {
+//     addBaseBUF(a.bit1, b.bit1);
+//     // addBaseNOT(i1 + str_bit0, o1 + str_bit0);
+//     string w1n = getNewWire();
+//     string w0n = getNewWire();
+//     addBaseNOT(a.bit1, w1n);
+//     addBaseNOT(a.bit0, w0n);
+//     addBaseAND(w1n, w0n, b.bit0);
+// }
 
 void moduleTranser::addSpeOR(speGate *gate)
 {
@@ -599,7 +591,7 @@ void moduleTranser::addSpeOR(speGate *gate)
     }
     bus2 io_bus[ioSize];
     for (int idx = 0; idx < ioSize; ++idx)
-        io_bus[idx] = getBusFromStr(gate->io[idx]);
+        io_bus[idx] = to_bus2(gate->io[idx]);
     // i_port.pop_back();
     bus2 w_bus[ioSize - 1];
 
@@ -627,7 +619,7 @@ void moduleTranser::addSpeNOR(speGate *gate)
     }
     bus2 io_bus[ioSize];
     for (int idx = 0; idx < ioSize; ++idx)
-        io_bus[idx] = getBusFromStr(gate->io[idx]);
+        io_bus[idx] = to_bus2(gate->io[idx]);
     // i_port.pop_back();
     bus2 w_bus[ioSize - 1];
 
@@ -643,5 +635,32 @@ void moduleTranser::addSpeNOR(speGate *gate)
         addOR(w_bus[idx], io_bus[idx + 1], w_bus[idx + 1]);
     }
     addNOT(w_bus[ioSize - 2], io_bus[ioSize - 1]);
+}
+void moduleTranser::addSpeAND(speGate *gate)
+{
+    if (!start)
+        return;
+    size_t ioSize = gate->io.size();
+    if (ioSize <= 3)
+    {
+        cout << "This shouldn't happen..." << endl;
+    }
+    bus2 io_bus[ioSize];
+    for (int idx = 0; idx < ioSize; ++idx)
+        io_bus[idx] = to_bus2(gate->io[idx]);
+    // i_port.pop_back();
+    bus2 w_bus[ioSize - 1];
+
+    w_bus[0] = io_bus[0];
+    w_bus[ioSize - 2] = io_bus[ioSize - 1];
+    for (int idx = 1; idx < ioSize - 2; ++idx)
+    {
+        w_bus[idx].bit1 = getNewWire();
+        w_bus[idx].bit0 = getNewWire();
+    }
+    for (int idx = 0; idx < ioSize - 2; ++idx)
+    {
+        addAND(w_bus[idx], io_bus[idx + 1], w_bus[idx + 1]);
+    }
 }
 #endif //__MODULE_TRANSER_H__
