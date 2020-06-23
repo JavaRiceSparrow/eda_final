@@ -1,18 +1,24 @@
 # eda_final
 
 By running 
-`g++ test.cpp -o test` 
-`./test`
+```
+~ $ g++ test.cpp -o test
+~ $ ./test
+```
 you could transform all the verilog file in /cases
 and save them in /output
 
-usage:
+## 附註：
+我放棄寫.cpp檔和makefile了，所以/module裏面的.cpp都是沒用的，不用管他
+
+
+## usage:
 <!-- not finished -->
 these three file are needed:
 
-#include "module/module.h"
-#include "module/modulePrinter.h"
-#include "module/moduleTranser.h"
+- #include "module/module.h"
+- #include "module/modulePrinter.h"
+- #include "module/moduleTranser.h"
 
 Three class:    module, modulePrinter, moduleTranser
 
