@@ -13,7 +13,7 @@ and save them in /output
 
 
 ## usage:
-## it's not finished 
+ # it's not finished 
 
 these three file are needed:
 
